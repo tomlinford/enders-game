@@ -3,6 +3,8 @@ package com.btsl.endersgame;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -22,15 +24,24 @@ public class MainRenderer implements Renderer {
 	
 	public MainRenderer(Context context) {
 		this.context = context;
-        mTriangleVertices = ByteBuffer.allocateDirect(mTriangleVerticesData.length
-                * FLOAT_SIZE_BYTES).order(ByteOrder.nativeOrder()).asFloatBuffer();
-        mTriangleVertices.put(mTriangleVerticesData).position(0);
 	}
 
 	@Override
 	public void onDrawFrame(GL10 unused) {
 		GLES20.glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
         GLES20.glClear( GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
+        int err = GLES20.glGetError();
+        program.Use();
+        err = GLES20.glGetError();
+        int vertexHandle = program.getAttribLocation("worldspacePosition");
+        err = GLES20.glGetError();
+        triangleAB.Use(vertexHandle);
+        err = GLES20.glGetError();
+        triangleEAB.draw(GLES20.GL_TRIANGLES);
+        err = GLES20.glGetError();
+        triangleAB.Unuse(vertexHandle);
+        err = GLES20.glGetError();
+        err = err + 1;
 	}
 
 	@Override
@@ -38,28 +49,33 @@ public class MainRenderer implements Renderer {
 		GLES20.glViewport(0, 0, width, height);
         float ratio = (float) width / height;
         Matrix.frustumM(projection, 0, -ratio, ratio, -1, 1, 3, 7);
+        int err = GLES20.glGetError();
+        err = err + 1;
 	}
 
 	@Override
 	public void onSurfaceCreated(GL10 unused, EGLConfig config) {
+		int err = GLES20.glGetError();
 		program = new Program("default.vert", "default.frag", context);
-		
+        err = GLES20.glGetError();
+		triangleAB = new ArrayBuffer(Arrays.asList(mTriangleVerticesData), 3);
+        err = GLES20.glGetError();
+		triangleEAB = new ElementArrayBuffer(Arrays.asList(TRIANGLE_ELEM_DATA));
+        err = GLES20.glGetError();
 		Matrix.setLookAtM(view, 0, 0, 0, -5, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
+        err = GLES20.glGetError();
+        err = err + 1;
 	}
 	
 
-
-    private static final int FLOAT_SIZE_BYTES = 4;
-    private static final int TRIANGLE_VERTICES_DATA_STRIDE_BYTES = 5 * FLOAT_SIZE_BYTES;
-    private static final int TRIANGLE_VERTICES_DATA_POS_OFFSET = 0;
-    private static final int TRIANGLE_VERTICES_DATA_UV_OFFSET = 3;
-    private final float[] mTriangleVerticesData = {
-            // X, Y, Z, U, V
-            -1.0f, -0.5f, 0, -0.5f, 0.0f,
-            1.0f, -0.5f, 0, 1.5f, -0.0f,
-            0.0f,  1.11803399f, 0, 0.5f,  1.61803399f };
-
-    private FloatBuffer mTriangleVertices;
+    private final Float[] mTriangleVerticesData = {
+            -1.0f, -0.5f, 0.f,
+            1.0f, -0.5f, 0.f,
+            0.0f,  1.11803399f, 0.f };
+    private final Integer[] TRIANGLE_ELEM_DATA = { 0, 1, 2 };
+    
     private Program program;
+    private ArrayBuffer triangleAB;
+    private ElementArrayBuffer triangleEAB;
 
 }

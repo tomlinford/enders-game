@@ -48,8 +48,9 @@ public class Program {
 	}
     
     /* Creates a new shader of the given type from the given filename
-       and attaches it to our program. 'type' shoulb be either
-       GLES20.GL_VERTEX_SHADER or GLES20.GL_FRAGMENT_SHADER.  */
+     * and attaches it to our program. 'type' should be either
+     * GLES20.GL_VERTEX_SHADER or GLES20.GL_FRAGMENT_SHADER.
+     * */
     public void attachShader(String shaderFilename, int type, Context context) {
         Shader shader = new Shader(shaderFilename, context, type);
         attachShader(shader);
@@ -64,7 +65,7 @@ public class Program {
 	public int getAttribLocation(String name) {
 		int location = GLES20.glGetAttribLocation(id, name);
         if (location < 0)
-            Log.e("Attribute", "Could not find attribute: " + name);
+            Log.e("Program", "Could not find attribute: " + name);
         return location;
 	}
 	
@@ -72,50 +73,61 @@ public class Program {
 	public int getUniformLocation(String name) {
 		int location = GLES20.glGetUniformLocation(id, name);
         if (location < 0)
-            Log.e("Uniform", "Could not find uniform: " + name);
+            Log.e("Program", "Could not find uniform: " + name);
         return location;
 	}
     
     /* Overloaded methods for assigning values to shader uniform variables */
     
     public void setUniform(String name, int value) {
-        int location = getAttribLocation(name);
+        int location = getUniformLocation(name);
         if (location < 0)
             return;
         GLES20.glUniform1i(location, value);
     }
     
     public void setUniform(String name, float value) {
-        int location = getAttribLocation(name);
+        int location = getUniformLocation(name);
         if (location < 0)
             return;
         GLES20.glUniform1f(location, value);
     }
     
     public void setUniform(String name, float x, float y) {
-        int location = getAttribLocation(name);
+        int location = getUniformLocation(name);
         if (location < 0)
             return;
         GLES20.glUniform2f(location, x, y);
     }
     
     public void setUniform(String name, float x, float y, float z) {
-        int location = getAttribLocation(name);
+        int location = getUniformLocation(name);
         if (location < 0)
             return;
         GLES20.glUniform3f(location, x, y, z);
     }
     
     public void setUniform(String name, float x, float y, float z, float w) {
-        int location = getAttribLocation(name);
+        int location = getUniformLocation(name);
         if (location < 0)
             return;
         GLES20.glUniform4f(location, x, y, z, w);
     }
     
+    public void setUniform(String name, Texture texture) {
+    	int location = getUniformLocation(name);
+        if (location < 0)
+            return;
+        
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture.getID());
+        GLES20.glUniform1i(id, 0);
+    }
+    
     /* Methods for assigning values for transformation matrices
-       The location for these matrices on the GPU are stored to
-       avoid lookup every single time. */
+     * The location for these matrices on the GPU are stored to
+     * avoid lookup every single time. 
+     * */
 	
 	public void setMVP(float[] mvp) {
         if (mvpID > 0)
@@ -136,4 +148,5 @@ public class Program {
         if (pID > 0)
 		    GLES20.glUniformMatrix4fv(pID, 1, false, p, 0);
 	}
+	
 }

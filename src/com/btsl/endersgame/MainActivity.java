@@ -1,5 +1,8 @@
 package com.btsl.endersgame;
 
+import com.btsl.endersgame.R;
+import com.btsl.endersgame.R.menu;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
