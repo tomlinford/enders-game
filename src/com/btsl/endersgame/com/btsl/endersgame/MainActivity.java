@@ -5,12 +5,27 @@ import android.app.Activity;
 import android.view.Menu;
 
 public class MainActivity extends Activity {
+	
+	private MainGLSurfaceView view;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		view = new MainGLSurfaceView(getApplication());
+		setContentView(view);
 	}
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        view.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        view.onResume();
+    }
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
