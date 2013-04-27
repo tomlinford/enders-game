@@ -49,6 +49,7 @@ public class Texture {
 	{	
 		GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, id);
 		
+		// Determine the pixel data type
 		int type;
 		if (pixels instanceof FloatBuffer) {
 			type = GLES20.GL_FLOAT;
@@ -64,6 +65,7 @@ public class Texture {
 			return;
 		}
 		
+		// Load the pixel data into the texture buffer
 	    GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, width, height, 0, format, type, pixels);
 	    GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
 	    GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);

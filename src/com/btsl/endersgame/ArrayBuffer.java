@@ -6,6 +6,7 @@ package com.btsl.endersgame;
 import java.util.List;
 
 import android.opengl.GLES20;
+import android.util.Log;
 
 /**
  * @author Tom
@@ -13,8 +14,31 @@ import android.opengl.GLES20;
  */
 public class ArrayBuffer<T> extends DataBuffer<T> {
 
+	private String attribute = null;
+	private int location;
+	
 	public ArrayBuffer(List<T> data) {
 		super(data, GLES20.GL_ARRAY_BUFFER);
+	}
+	
+	public void setAttribute(String attribute) {
+		this.attribute = attribute;
+	}
+	
+	public void use(Program program) {
+		if (attribute == null)
+			Log.e("Buffer", "Attempted to bind buffer not yet associated with an attribute");
+		
+		location = program.getAttribLocation(attribute);
+		if (location < 0)
+			Log.e("Buffer", "Attempted to bind buffer to an attribute not found in the current shader program");
+		
+		bind();
+		GLES20.glEnableVertexAttribArray(location);
+	}
+	
+	public void unuse(Program program) {
+		GLES20.glDisableVertexAttribArray(location);
 	}
 	
 }

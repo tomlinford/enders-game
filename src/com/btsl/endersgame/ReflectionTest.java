@@ -1,14 +1,15 @@
 package com.btsl.endersgame;
 
-import static org.junit.Assert.*;
+import android.test.ActivityInstrumentationTestCase2;
 
-import org.junit.Test;
+public class ReflectionTest extends ActivityInstrumentationTestCase2<MainActivity> {
 
-public class ReflectionTest {
-
-	@Test
+	public ReflectionTest() {  
+	       super(MainActivity.class);  
+	   }
+	
 	public void test() {
-		Object o = new Integer(1);
+		Object o = Integer.valueOf(1);
 		System.out.print(o instanceof Integer);
 		fail("Not yet implemented");
 	}

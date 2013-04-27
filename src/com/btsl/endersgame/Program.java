@@ -28,9 +28,9 @@ public class Program {
         
         // Fetch location of common matrices
 		mvpID = getUniformLocation("MVP");
-        mID = getUniformLocation("MVP");
-        vID = getUniformLocation("MVP");
-        pID = getUniformLocation("MVP");
+        mID = getUniformLocation("M");
+        vID = getUniformLocation("V");
+        pID = getUniformLocation("P");
 	}
 	
     /* Attaches the given Shader object to our program */

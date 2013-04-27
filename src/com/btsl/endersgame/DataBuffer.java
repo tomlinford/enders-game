@@ -16,39 +16,44 @@ import android.util.Log;
  */
 public abstract class DataBuffer<T> extends AbstractBuffer {
 	
-	protected final int dataType;
+	public final int dataType;
 
 	public DataBuffer(List<T> data, int target) {
-		super(genBuffer(), target);
-		if (data.isEmpty()) {
-			dataType = 0;
-			return;
-		}
-
+		super(genBuffer(), target, data.size());
+		
 		bind();
 		if (data.get(0) instanceof Float) {
-			float[] arrayData = new float[data.size()];
-			int i = 0;
-			for (T elem : data) arrayData[i++] = (Float) elem;
-			FloatBuffer fb = FloatBuffer.wrap(arrayData);
-			GLES20.glBufferData(target, arrayData.length * 4, fb, GLES20.GL_STATIC_DRAW);
 			dataType = GLES20.GL_FLOAT;
-		} else if (data.get(0) instanceof Integer) {
-			int[] arrayData = new int[data.size()];
-			int i = 0;
-			for (T elem : data) arrayData[i++] = (Integer) elem;
-			IntBuffer ib = IntBuffer.wrap(arrayData);
-			GLES20.glBufferData(target, arrayData.length * 4, ib, GLES20.GL_STATIC_DRAW);
-			dataType = GLES20.GL_INT;
-		} else {
-			Log.e("DataBuffer", "Unknown dataType passed into DataBuffer constructor");
-			dataType = 0;
+			FloatBuffer fb = FloatBuffer.wrap(toFloatArray(data));
+			GLES20.glBufferData(target, data.size() * 4, fb, GLES20.GL_STATIC_DRAW);
 		}
+		else if (data.get(0) instanceof Integer) {
+			dataType = GLES20.GL_INT;
+			IntBuffer ib = IntBuffer.wrap(toIntArray(data));
+			GLES20.glBufferData(target, data.size() * 4, ib, GLES20.GL_STATIC_DRAW);
+		}
+		else {
+			// 'instanceof' evaluates to false if data is null or empty
+			dataType = 0;
+			Log.e("DataBuffer", "Unsupported data type passed into DataBuffer constructor");
+		}
+		unbind();
 	}
-
-	@Override
-	public void bind() {
-		GLES20.glBindBuffer(target, id);
+	
+	/* Overloaded methods for converting Lists into arrays of primitives */
+	
+	private static <T> float[] toFloatArray(List<T> data) {
+		float[] arrayData = new float[data.size()];
+		for (int i = 0; i < data.size(); i++) 
+			arrayData[i] = (Float)data.get(i);
+		return arrayData;
+	}
+	
+	private static <T> int[] toIntArray(List<T> data) {
+		int[] arrayData = new int[data.size()];
+		for (int i = 0; i < data.size(); i++) 
+			arrayData[i] = (Integer)data.get(i);
+		return arrayData;
 	}
 	
 	/**

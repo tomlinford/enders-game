@@ -12,6 +12,10 @@ public class Shader {
 	
 	private final int id;
 	
+	/* Creates a shader of the specified type from the specified
+	 * file. The type should be either GLES20.GL_VERTEX_SHADER or
+	 * GLES20.GL_FRAGMENT_SHADER.
+	 */
 	public Shader(String filename, Context context, int shaderType) {
         
         // Read program source into a string
@@ -38,6 +42,7 @@ public class Shader {
         }
 	}
 	
+	/* Returns this shader's ID */
 	public int getID() {
 		return id;
 	}
