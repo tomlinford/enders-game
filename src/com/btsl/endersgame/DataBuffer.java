@@ -20,12 +20,12 @@ public abstract class DataBuffer<T> extends AbstractBuffer {
 
 	public DataBuffer(List<T> data, int target) {
 		super(genBuffer(), target);
-		bind();
 		if (data.isEmpty()) {
 			dataType = 0;
 			return;
 		}
-		
+
+		bind();
 		if (data.get(0) instanceof Float) {
 			float[] arrayData = new float[data.size()];
 			int i = 0;
