@@ -16,7 +16,7 @@ import android.util.Log;
  */
 public abstract class DataBuffer<T> extends AbstractBuffer {
 	
-	final int dataType;
+	protected final int dataType;
 
 	public DataBuffer(List<T> data, int target) {
 		super(genBuffer(), target);
@@ -27,17 +27,15 @@ public abstract class DataBuffer<T> extends AbstractBuffer {
 		
 		if (data.get(0) instanceof Float) {
 			float[] arrayData = new float[data.size()];
-			for (int i = 0; i < arrayData.length; i++) {
-				arrayData[i] = (Float) data.get(i);
-			}
+			int i = 0;
+			for (T elem : data) arrayData[i++] = (Float) elem;
 			FloatBuffer fb = FloatBuffer.wrap(arrayData);
 			GLES20.glBufferData(target, arrayData.length * 4, fb, GLES20.GL_STATIC_DRAW);
 			dataType = GLES20.GL_FLOAT;
 		} else if (data.get(0) instanceof Integer) {
 			int[] arrayData = new int[data.size()];
-			for (int i = 0; i < arrayData.length; i++) {
-				arrayData[i] = (Integer) data.get(i);
-			}
+			int i = 0;
+			for (T elem : data) arrayData[i++] = (Integer) elem;
 			IntBuffer ib = IntBuffer.wrap(arrayData);
 			GLES20.glBufferData(target, arrayData.length * 4, ib, GLES20.GL_STATIC_DRAW);
 			dataType = GLES20.GL_INT;

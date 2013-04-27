@@ -38,11 +38,3 @@ public class Shader {
 	}
 
 }
-
-//public class VertexShader extends Shader {
-//
-//	public VertexShader(String filename, Context context) {
-//		super(filename, context, GLES20.GL_VERTEX_SHADER);
-//	}
-//	
-//}

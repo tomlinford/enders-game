@@ -12,18 +12,13 @@ public class Program {
 	public Program(String vertexShaderFilename, String fragmentShaderFilename,
 					Context context) {
 		this(new Shader(vertexShaderFilename, context, GLES20.GL_VERTEX_SHADER),
-			new Shader(vertexShaderFilename, context, GLES20.GL_VERTEX_SHADER));
+			new Shader(fragmentShaderFilename, context, GLES20.GL_FRAGMENT_SHADER));
 	}
 	
 	public Program(Shader vertexShader, Shader fragmentShader) {
 		id = GLES20.glCreateProgram();
-		attachShader(vertexShader);
-		attachShader(fragmentShader);
-		mvpID = getUniformLocation("MVP");
-	}
-	
-	public void attachShader(Shader shader) {
-		GLES20.glAttachShader(id, shader.getID());
+		GLES20.glAttachShader(id, vertexShader.getID());
+		GLES20.glAttachShader(id, fragmentShader.getID());
 		GLES20.glLinkProgram(id);
 
         int[] linkStatus = new int[1];
@@ -33,6 +28,7 @@ public class Program {
             Log.e("Program", GLES20.glGetProgramInfoLog(id));
             GLES20.glDeleteProgram(id);
         }
+		mvpID = getUniformLocation("MVP");
 	}
 	
 	public void Use() {
