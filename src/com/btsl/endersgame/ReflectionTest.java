@@ -1,4 +1,4 @@
-package com.btsl;
+package com.btsl.endersgame;
 
 import static org.junit.Assert.*;
 

@@ -1,4 +1,4 @@
-package com.btsl;
+package com.btsl.endersgame;
 
 import com.btsl.endersgame.R;
 import com.btsl.endersgame.R.menu;

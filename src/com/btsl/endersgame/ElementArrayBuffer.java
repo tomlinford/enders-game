@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.btsl;
+package com.btsl.endersgame;
 
 import java.util.List;
 

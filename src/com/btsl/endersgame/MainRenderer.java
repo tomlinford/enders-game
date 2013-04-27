@@ -1,4 +1,4 @@
-package com.btsl;
+package com.btsl.endersgame;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
