@@ -114,26 +114,28 @@ public class Program {
     
     /* Methods for assigning values for transformation matrices
      * The location for these matrices on the GPU are stored to
-     * avoid lookup every single time. 
+     * avoid lookup every single time.
+     * 
+     * Uniform location can be 0
      * */
 	
 	public void setMVP(float[] mvp) {
-        if (mvpID > 0)
+        if (mvpID >= 0)
 		    GLES20.glUniformMatrix4fv(mvpID, 1, false, mvp, 0);
 	}
 
 	public void setM(float[] m) {
-        if (mID > 0)
+        if (mID >= 0)
 		    GLES20.glUniformMatrix4fv(mID, 1, false, m, 0);
 	}
     
 	public void setV(float[] v) {
-        if (vID > 0)
+        if (vID >= 0)
 		    GLES20.glUniformMatrix4fv(vID, 1, false, v, 0);
 	}
     
 	public void setP(float[] p) {
-        if (pID > 0)
+        if (pID >= 0)
 		    GLES20.glUniformMatrix4fv(pID, 1, false, p, 0);
 	}
 	

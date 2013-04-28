@@ -35,14 +35,9 @@ public class MainRenderer implements Renderer {
         // Use our custom shader
         program.use();
         
-        // Set transformation
-        float[] model = new float[16];
-        float[] MV = new float[16];
-        float[] MVP = new float[16];
-        Matrix.setIdentityM(model, 0);
-        Matrix.multiplyMM(MV, 0, view, 0, model, 0);
-        Matrix.multiplyMM(MVP, 0, projection, 0, MV, 0);
-        program.setMVP(MVP);
+        // Set transformation. Using iVars to avoid allocation
+        Matrix.multiplyMM(mvp, 0, projection, 0, view, 0);
+        program.setMVP(mvp);
         
         // Draw the test object
         triangleAB.use(program);

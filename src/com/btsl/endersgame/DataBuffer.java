@@ -76,14 +76,14 @@ public abstract class DataBuffer<T> extends AbstractBuffer {
 	private static <T> short[] toShortArray(List<T> data) {
 		short[] arrayData = new short[data.size()];
 		int i = 0;
-		for (T elem : data) arrayData[i++] = (Short) elem;
+		for (T elem : data) arrayData[i++] = ((Integer) elem).shortValue();
 		return arrayData;
 	}
 
 	private static <T> int[] toIntArray(List<T> data) {
 		int[] arrayData = new int[data.size()];
 		int i = 0;
-		for (T elem : data) arrayData[i++] = ((Integer) elem).shortValue();
+		for (T elem : data) arrayData[i++] = (Integer) elem;
 		return arrayData;
 	}
 
