@@ -6,17 +6,25 @@ import android.util.Log;
 
 public class Program {
 	
+    // Program location on GPU
 	private final int id;
+    
+    // Storing ID's for common matrices
 	private final int mvpID;
+    private final int mID;
+    private final int vID;
+    private final int pID;
 	
 	public Program(String vertexShaderFilename, String fragmentShaderFilename,
-					Context context) {
+				   Context context) {
 		this(new Shader(vertexShaderFilename, context, GLES20.GL_VERTEX_SHADER),
 			new Shader(fragmentShaderFilename, context, GLES20.GL_FRAGMENT_SHADER));
 	}
 	
 	public Program(Shader vertexShader, Shader fragmentShader) {
 		id = GLES20.glCreateProgram();
+		
+		// GLES specific stuff: must attach all shaders prior to linkage
 		GLES20.glAttachShader(id, vertexShader.getID());
 		GLES20.glAttachShader(id, fragmentShader.getID());
 		GLES20.glLinkProgram(id);
@@ -28,23 +36,105 @@ public class Program {
             Log.e("Program", GLES20.glGetProgramInfoLog(id));
             GLES20.glDeleteProgram(id);
         }
+        
+        // Fetch location of common matrices
 		mvpID = getUniformLocation("MVP");
+        mID = getUniformLocation("M");
+        vID = getUniformLocation("V");
+        pID = getUniformLocation("P");
 	}
 	
-	public void Use() {
+    /* Call to use this shader program for subsequent rendering calls */
+	public void use() {
 		GLES20.glUseProgram(id);
 	}
 	
+    /* Fetches the location for a given attribute in this shader program */
 	public int getAttribLocation(String name) {
-		return GLES20.glGetAttribLocation(id, name);
+		int location = GLES20.glGetAttribLocation(id, name);
+        if (location < 0)
+            Log.e("Program", "Could not find attribute: " + name);
+        return location;
 	}
 	
+    /* Fetches the location for a given uniform in this shader program */
 	public int getUniformLocation(String name) {
-		return GLES20.glGetUniformLocation(id, name);
+		int location = GLES20.glGetUniformLocation(id, name);
+        if (location < 0)
+            Log.e("Program", "Could not find uniform: " + name);
+        return location;
 	}
+    
+    /* Overloaded methods for assigning values to shader uniform variables */
+    
+    public void setUniform(String name, int value) {
+        int location = getUniformLocation(name);
+        if (location < 0)
+            return;
+        GLES20.glUniform1i(location, value);
+    }
+    
+    public void setUniform(String name, float value) {
+        int location = getUniformLocation(name);
+        if (location < 0)
+            return;
+        GLES20.glUniform1f(location, value);
+    }
+    
+    public void setUniform(String name, float x, float y) {
+        int location = getUniformLocation(name);
+        if (location < 0)
+            return;
+        GLES20.glUniform2f(location, x, y);
+    }
+    
+    public void setUniform(String name, float x, float y, float z) {
+        int location = getUniformLocation(name);
+        if (location < 0)
+            return;
+        GLES20.glUniform3f(location, x, y, z);
+    }
+    
+    public void setUniform(String name, float x, float y, float z, float w) {
+        int location = getUniformLocation(name);
+        if (location < 0)
+            return;
+        GLES20.glUniform4f(location, x, y, z, w);
+    }
+    
+    public void setUniform(String name, Texture texture) {
+    	int location = getUniformLocation(name);
+        if (location < 0)
+            return;
+        
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture.getID());
+        GLES20.glUniform1i(id, 0);
+    }
+    
+    /* Methods for assigning values for transformation matrices
+     * The location for these matrices on the GPU are stored to
+     * avoid lookup every single time. 
+     * */
 	
 	public void setMVP(float[] mvp) {
-		GLES20.glUniformMatrix4fv(mvpID, 1, false, mvp, 0);
+        if (mvpID > 0)
+		    GLES20.glUniformMatrix4fv(mvpID, 1, false, mvp, 0);
 	}
 
+	public void setM(float[] m) {
+        if (mID > 0)
+		    GLES20.glUniformMatrix4fv(mID, 1, false, m, 0);
+	}
+    
+	public void setV(float[] v) {
+        if (vID > 0)
+		    GLES20.glUniformMatrix4fv(vID, 1, false, v, 0);
+	}
+    
+	public void setP(float[] p) {
+        if (pID > 0)
+		    GLES20.glUniformMatrix4fv(pID, 1, false, p, 0);
+	}
+	
 }

@@ -10,6 +10,7 @@ public class MainGLSurfaceView extends GLSurfaceView {
 		setEGLContextClientVersion(2);
 		setDebugFlags(DEBUG_CHECK_GL_ERROR);
 		setRenderer(new MainRenderer(context));
+		setRenderMode(RENDERMODE_WHEN_DIRTY);
 	}
 
 }

@@ -6,34 +6,42 @@ package com.btsl.endersgame;
 import java.util.List;
 
 import android.opengl.GLES20;
+import android.util.Log;
 
 /**
  * @author Tom
  *
- * Currently only implemented for floats
  */
-public class ArrayBuffer extends DataBuffer<Float> {
-	
-	protected final int vertexSize;
+public class ArrayBuffer<T> extends DataBuffer<T> {
 
-	/**
-	 * 
-	 * @param data The data to put into the OpenGL buffer
-	 * @param vertexSize ie, this should be 3 if this buffer refers to a vec3
-	 */
-	public ArrayBuffer(List<Float> data, int vertexSize) {
+	private String attribute = null;
+	private int location;
+	private final int vertexSize;
+	
+	public ArrayBuffer(List<T> data, int vertexSize) {
 		super(data, GLES20.GL_ARRAY_BUFFER);
 		this.vertexSize = vertexSize;
 	}
 	
-	public void Use(int attribHandle) {
-		GLES20.glEnableVertexAttribArray(attribHandle);
-		bind();
-		GLES20.glVertexAttribPointer(attribHandle, vertexSize,
-									dataType, false, 0, 0);
+	public void setAttribute(String attribute) {
+		this.attribute = attribute;
 	}
 	
-	public void Unuse(int attribHandle) {
-		GLES20.glDisableVertexAttribArray(attribHandle);
+	public void use(Program program) {
+		if (attribute == null)
+			Log.e("Buffer", "Attempted to bind buffer not yet associated with an attribute");
+		
+		location = program.getAttribLocation(attribute);
+		if (location < 0)
+			Log.e("Buffer", "Attempted to bind buffer to an attribute not found in the current shader program");
+		
+		GLES20.glEnableVertexAttribArray(location);
+		bind();
+		GLES20.glVertexAttribPointer(location, vertexSize, dataType, false, 0, 0);
 	}
+	
+	public void unuse(Program program) {
+		GLES20.glDisableVertexAttribArray(location);
+	}
+	
 }

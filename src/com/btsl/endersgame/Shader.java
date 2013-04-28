@@ -12,7 +12,13 @@ public class Shader {
 	
 	private final int id;
 	
+	/* Creates a shader of the specified type from the specified
+	 * file. The type should be either GLES20.GL_VERTEX_SHADER or
+	 * GLES20.GL_FRAGMENT_SHADER.
+	 */
 	public Shader(String filename, Context context, int shaderType) {
+        
+        // Read program source into a string
 		String source = "";
 		try {
 			InputStream is = context.getAssets().open(filename);
@@ -21,9 +27,12 @@ public class Shader {
 			e.printStackTrace();
 		}
 
+        // Create and compile shader from the source string
 		id = GLES20.glCreateShader(shaderType);
 		GLES20.glShaderSource(id, source);
 		GLES20.glCompileShader(id);
+        
+        // Error handling
         int[] compiled = new int[1];
         GLES20.glGetShaderiv(id, GLES20.GL_COMPILE_STATUS, compiled, 0);
         if (compiled[0] == 0) {
@@ -33,6 +42,7 @@ public class Shader {
         }
 	}
 	
+	/* Returns this shader's ID */
 	public int getID() {
 		return id;
 	}

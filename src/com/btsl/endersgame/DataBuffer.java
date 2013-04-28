@@ -3,6 +3,7 @@
  */
 package com.btsl.endersgame;
 
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
@@ -16,42 +17,76 @@ import android.util.Log;
  *
  */
 public abstract class DataBuffer<T> extends AbstractBuffer {
-	
-	protected final int dataType;
+
+	public final int dataType;
 
 	public DataBuffer(List<T> data, int target) {
-		super(genBuffer(), target);
-		if (data.isEmpty()) {
-			dataType = 0;
-			return;
-		}
+		super(genBuffer(), target, data.size());
 
 		bind();
 		if (data.get(0) instanceof Float) {
-			float[] arrayData = new float[data.size()];
-			int i = 0;
-			for (T elem : data) arrayData[i++] = (Float) elem;
-			FloatBuffer fb = FloatBuffer.wrap(arrayData);
-			GLES20.glBufferData(target, arrayData.length * 4, fb, GLES20.GL_STATIC_DRAW);
 			dataType = GLES20.GL_FLOAT;
-		} else if (data.get(0) instanceof Short) {
-			int[] arrayData = new int[data.size()];
-			int i = 0;
-			for (T elem : data) arrayData[i++] = (Short) elem;
-			IntBuffer sb = IntBuffer.wrap(arrayData);
-			GLES20.glBufferData(target, arrayData.length * 4, sb, GLES20.GL_STATIC_DRAW);
-			dataType = GLES20.GL_UNSIGNED_INT;
+			FloatBuffer fb = FloatBuffer.wrap(toFloatArray(data));
+			GLES20.glBufferData(target, data.size() * 4, fb, GLES20.GL_STATIC_DRAW);
+		} else if (data.get(0) instanceof Integer) {
+			
+			// use whatever data type will use the least amount of space in memory
+			if (size < Byte.MAX_VALUE) {
+				dataType = GLES20.GL_UNSIGNED_BYTE;
+				ByteBuffer bb = ByteBuffer.wrap(toByteArray(data));
+				GLES20.glBufferData(target, data.size(), bb, GLES20.GL_STATIC_DRAW);
+			} else if (size < Short.MAX_VALUE) {
+				dataType = GLES20.GL_UNSIGNED_SHORT;
+				ShortBuffer sb = ShortBuffer.wrap(toShortArray(data));
+				GLES20.glBufferData(target, data.size() * 2, sb, GLES20.GL_STATIC_DRAW);
+			} else { // assume it's less than Integer.MAX_VALUE
+				dataType = GLES20.GL_UNSIGNED_INT;
+				IntBuffer ib = IntBuffer.wrap(toIntArray(data));
+				GLES20.glBufferData(target, data.size() * 4, ib, GLES20.GL_STATIC_DRAW);
+			}
 		} else {
-			Log.e("DataBuffer", "Unknown dataType passed into DataBuffer constructor");
+			// 'instanceof' evaluates to false if data is null or empty
 			dataType = 0;
+			Log.e("DataBuffer", "Unsupported data type passed into DataBuffer constructor");
 		}
+		unbind();
 	}
 
-	@Override
-	public void bind() {
-		GLES20.glBindBuffer(target, id);
+	/* Overloaded methods for converting Lists into arrays of primitives */
+
+	private static <T> float[] toFloatArray(List<T> data) {
+		float[] arrayData = new float[data.size()];
+
+		// using this way of building the for loop uses iterators, so if the List
+		// is implemented as LinkedList, the get() method wouldn't take 0(n) time
+		int i = 0;
+		for (T elem : data) arrayData[i++] = (Float) elem;
+		return arrayData;
 	}
-	
+
+	private static <T> byte[] toByteArray(List<T> data) {
+		byte[] arrayData = new byte[data.size()];
+		int i = 0;
+		for (T elem : data) {
+			arrayData[i++] = ((Integer) elem).byteValue();
+		}
+		return arrayData;
+	}
+
+	private static <T> short[] toShortArray(List<T> data) {
+		short[] arrayData = new short[data.size()];
+		int i = 0;
+		for (T elem : data) arrayData[i++] = (Short) elem;
+		return arrayData;
+	}
+
+	private static <T> int[] toIntArray(List<T> data) {
+		int[] arrayData = new int[data.size()];
+		int i = 0;
+		for (T elem : data) arrayData[i++] = ((Integer) elem).shortValue();
+		return arrayData;
+	}
+
 	/**
 	 * Generate a buffer for the DataBuffer
 	 * @return
