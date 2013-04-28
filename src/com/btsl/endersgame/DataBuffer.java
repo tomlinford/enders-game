@@ -5,6 +5,7 @@ package com.btsl.endersgame;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 import java.util.List;
 
 import android.opengl.GLES20;
@@ -33,13 +34,13 @@ public abstract class DataBuffer<T> extends AbstractBuffer {
 			FloatBuffer fb = FloatBuffer.wrap(arrayData);
 			GLES20.glBufferData(target, arrayData.length * 4, fb, GLES20.GL_STATIC_DRAW);
 			dataType = GLES20.GL_FLOAT;
-		} else if (data.get(0) instanceof Integer) {
+		} else if (data.get(0) instanceof Short) {
 			int[] arrayData = new int[data.size()];
 			int i = 0;
-			for (T elem : data) arrayData[i++] = (Integer) elem;
-			IntBuffer ib = IntBuffer.wrap(arrayData);
-			GLES20.glBufferData(target, arrayData.length * 4, ib, GLES20.GL_STATIC_DRAW);
-			dataType = GLES20.GL_INT;
+			for (T elem : data) arrayData[i++] = (Short) elem;
+			IntBuffer sb = IntBuffer.wrap(arrayData);
+			GLES20.glBufferData(target, arrayData.length * 4, sb, GLES20.GL_STATIC_DRAW);
+			dataType = GLES20.GL_UNSIGNED_INT;
 		} else {
 			Log.e("DataBuffer", "Unknown dataType passed into DataBuffer constructor");
 			dataType = 0;

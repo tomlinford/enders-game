@@ -11,11 +11,11 @@ import android.opengl.GLES20;
  * @author Tom
  *
  */
-public class ElementArrayBuffer extends DataBuffer<Integer> {
+public class ElementArrayBuffer extends DataBuffer<Short> {
 
 	protected final int numElems;
 	
-	public ElementArrayBuffer(List<Integer> data) {
+	public ElementArrayBuffer(List<Short> data) {
 		super(data, GLES20.GL_ELEMENT_ARRAY_BUFFER);
 		numElems = data.size();
 	}

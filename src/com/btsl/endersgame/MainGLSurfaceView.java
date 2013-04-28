@@ -8,6 +8,7 @@ public class MainGLSurfaceView extends GLSurfaceView {
 	public MainGLSurfaceView(Context context) {
 		super(context);
 		setEGLContextClientVersion(2);
+		setDebugFlags(DEBUG_CHECK_GL_ERROR);
 		setRenderer(new MainRenderer(context));
 	}
 
