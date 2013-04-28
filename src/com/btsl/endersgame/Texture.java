@@ -75,7 +75,7 @@ public class Texture {
 	}
 	
 	/* Generates a texture buffer */
-	private static int genTexture()
+	protected static int genTexture()
 	{
 		int[] buf = new int[1];
 		GLES20.glGenTextures(1, buf, 0);
