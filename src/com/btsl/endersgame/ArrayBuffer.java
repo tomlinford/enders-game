@@ -21,19 +21,27 @@ public class ArrayBuffer<T> extends DataBuffer<T> {
 	public ArrayBuffer(List<T> data, int vertexSize) {
 		super(data, GLES20.GL_ARRAY_BUFFER);
 		this.vertexSize = vertexSize;
+        this.location = -1;
 	}
 	
 	public void setAttribute(String attribute) {
 		this.attribute = attribute;
+        this.location = -1;
 	}
 	
 	public void use(Program program) {
-		if (attribute == null)
+		if (attribute == null) {
 			Log.e("Buffer", "Attempted to bind buffer not yet associated with an attribute");
+            return;
+        }
 		
-		location = program.getAttribLocation(attribute);
-		if (location < 0)
-			Log.e("Buffer", "Attempted to bind buffer to an attribute not found in the current shader program");
+		if (location < 0) {
+            location = program.getAttribLocation(attribute);
+            if (location < 0) {
+    			Log.e("Buffer", "Attempted to bind buffer to an attribute not found in the current shader program");
+                return;
+            }
+        }
 		
 		GLES20.glEnableVertexAttribArray(location);
 		bind();
