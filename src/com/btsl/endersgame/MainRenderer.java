@@ -19,6 +19,7 @@ public class MainRenderer implements Renderer {
 	/* Transformation matrices */
 	private float[] projection = new float[16];
 	private float[] view = new float[16];
+	private float[] model = new float[16];
 	private float[] mvp = new float[16];
 	
 	public MainRenderer(Context context) {
@@ -40,9 +41,7 @@ public class MainRenderer implements Renderer {
         program.setMVP(mvp);
         
         // Draw the test object
-        triangleAB.use(program);
-        triangleEAB.draw(GLES20.GL_TRIANGLES);
-        triangleAB.unuse(program);
+        triangleComponent.Draw(program, GLES20.GL_TRIANGLES);
 	}
 
 	@Override
@@ -57,12 +56,8 @@ public class MainRenderer implements Renderer {
 		// Create our shader program
 		program = new Program("default.vert", "default.frag", context);
 		
-		// must initialize here because otherwise we won't have an OpenGL context
-		triangleAB = new ArrayBuffer<Float>(Arrays.asList(TRIANGLE_VERTICES_DATA), 3);
-		triangleEAB = new ElementArrayBuffer(Arrays.asList(TRIANGLE_ELEM_DATA));
-		
-		// Test object
-		triangleAB.setAttribute("vertexCoordinates");
+		triangleComponent = new Component(Arrays.asList(TRIANGLE_VERTICES_DATA),
+				Arrays.asList(TRIANGLE_NORMALS_DATA), Arrays.asList(TRIANGLE_ELEM_DATA));
 		
 		// Set view properties
 		Matrix.setLookAtM(
@@ -79,10 +74,18 @@ public class MainRenderer implements Renderer {
         0.0f,  1.11803399f, 0.f 
     };
     
+    private final Float[] TRIANGLE_NORMALS_DATA = {
+    	0f, 0f, -1f,
+    	0f, 0f, -1f,
+    	0f, 0f, -1f,
+    };
+    
     private final Integer[] TRIANGLE_ELEM_DATA = { 0, 1, 2 };
     
     private Program program;
-    private ArrayBuffer<Float> triangleAB;
-    private ElementArrayBuffer triangleEAB;
+//    private ArrayBuffer<Float> triangleAB;
+//    private ArrayBuffer<Float> triangleNormalAB;
+//    private ElementArrayBuffer triangleEAB;
+    private Component triangleComponent;
 
 }
