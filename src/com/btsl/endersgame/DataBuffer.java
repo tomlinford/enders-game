@@ -31,11 +31,11 @@ public abstract class DataBuffer<T> extends AbstractBuffer {
 		} else if (data.get(0) instanceof Integer) {
 			
 			// use whatever data type will use the least amount of space in memory
-			if (size < Byte.MAX_VALUE) {
+			if (size <= Byte.MAX_VALUE) {
 				dataType = GLES20.GL_UNSIGNED_BYTE;
 				ByteBuffer bb = ByteBuffer.wrap(toByteArray(data));
 				GLES20.glBufferData(target, data.size(), bb, GLES20.GL_STATIC_DRAW);
-			} else if (size < Short.MAX_VALUE) {
+			} else if (size <= Short.MAX_VALUE) {
 				dataType = GLES20.GL_UNSIGNED_SHORT;
 				ShortBuffer sb = ShortBuffer.wrap(toShortArray(data));
 				GLES20.glBufferData(target, data.size() * 2, sb, GLES20.GL_STATIC_DRAW);
