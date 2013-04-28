@@ -57,7 +57,7 @@ public class Program {
     }
 	
     /* Call to use this shader program for subsequent rendering calls */
-	public void Use() {
+	public void use() {
 		GLES20.glUseProgram(id);
 	}
 	

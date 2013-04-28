@@ -31,16 +31,21 @@ public class MainRenderer implements Renderer {
         GLES20.glClear( GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
         
         // Use our custom shader
-        program.Use();
+        program.use();
+        
+        // Set transformation
+        float[] model = new float[16];
+        float[] MV = new float[16];
+        float[] MVP = new float[16];
+        Matrix.setIdentityM(model, 0);
+        Matrix.multiplyMM(MV, 0, view, 0, model, 0);
+        Matrix.multiplyMM(MVP, 0, projection, 0, MV, 0);
+        program.setMVP(MVP);
         
         // Draw the test object
         triangleAB.use(program);
         triangleEAB.draw(GLES20.GL_TRIANGLES);
         triangleAB.unuse(program);
-        
-        // Record errors
-        int err = GLES20.glGetError();
-        err = err + 1;
 	}
 
 	@Override
@@ -48,14 +53,10 @@ public class MainRenderer implements Renderer {
 		GLES20.glViewport(0, 0, width, height);
         float ratio = (float) width / height;
         Matrix.frustumM(projection, 0, -ratio, ratio, -1, 1, 3, 7);
-        int err = GLES20.glGetError();
-        err = err + 1;
 	}
 
 	@Override
 	public void onSurfaceCreated(GL10 unused, EGLConfig config) {
-		int err = GLES20.glGetError();
-		
 		// Create our shader program
 		program = new Program("default.vert", "default.frag", context);
 		
@@ -68,7 +69,6 @@ public class MainRenderer implements Renderer {
 			0.0f, 0.0f, 0.0f, 	 // Eye position
 			-5.0f, 0.0f, 0.0f,   // Eye target
 			0.0f, 1.0f, 0.0f);   // Up vector
-        err = err + 1;
 	}
 	
 
