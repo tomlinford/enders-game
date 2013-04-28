@@ -25,6 +25,7 @@ public class Component {
 		assert vertices.size() * 2 == tex.size() * 3
 				: "Compenent: vertices and textures must have same number of vectors";
 		this.tex = new ArrayBuffer<Float>(tex, 2);
+		this.tex.setAttribute("texCoordinates");
 	}
 	
 	/**
@@ -38,6 +39,7 @@ public class Component {
 		assert vertices.size() == normals.size()
 				: "Compenent: vertices and normals must have same number of vectors";
 		this.normals = new ArrayBuffer<Float>(normals, 3);
+		this.normals.setAttribute("normalCoordinates");
 	}
 	
 	/**
@@ -47,6 +49,7 @@ public class Component {
 	 */
 	public Component(List<Float> vertices, List<Integer> indices) {
 		this.vertices = new ArrayBuffer<Float>(vertices, 3);
+		this.vertices.setAttribute("vertexCoordinates");
 		this.indices = new ElementArrayBuffer(indices);
 	}
 	
@@ -58,7 +61,7 @@ public class Component {
 		// Load information for the drawElements call
 		vertices.use(program);
 		if (normals != null) normals.use(program);
-		if (tex!= null) tex.use(program);
+		if (tex != null) tex.use(program);
 		
 		// Draw
 		indices.draw(mode);
@@ -66,6 +69,6 @@ public class Component {
 		// Unload information
 		vertices.unuse(program);
 		if (normals != null) normals.unuse(program);
-		if (normals != null) tex.unuse(program);
+		if (tex != null) tex.unuse(program);
 	}
 }
