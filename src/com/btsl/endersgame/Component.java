@@ -13,10 +13,40 @@ public class Component {
 	// Component-specific orientation data
 	float[] orientation;
 	
+	/**
+	 * Create Component with everything specified
+	 * @param vertices
+	 * @param normals
+	 * @param tex
+	 * @param indices
+	 */
 	public Component(List<Float> vertices, List<Float> normals, List<Float> tex, List<Integer> indices) {
-		this.vertices = new ArrayBuffer<Float>(vertices, 3);
-		this.normals = new ArrayBuffer<Float>(normals, 3);
+		this(vertices, normals, indices);
+		assert vertices.size() * 2 == tex.size() * 3
+				: "Compenent: vertices and textures must have same number of vectors";
 		this.tex = new ArrayBuffer<Float>(tex, 2);
+	}
+	
+	/**
+	 * Create Component from only vertices and normals
+	 * @param vertices
+	 * @param normals
+	 * @param indices
+	 */
+	public Component(List<Float> vertices, List<Float> normals, List<Integer> indices) {
+		this(vertices, indices);
+		assert vertices.size() == normals.size()
+				: "Compenent: vertices and normals must have same number of vectors";
+		this.normals = new ArrayBuffer<Float>(normals, 3);
+	}
+	
+	/**
+	 * Create Component from just vertices
+	 * @param vertices
+	 * @param indices
+	 */
+	public Component(List<Float> vertices, List<Integer> indices) {
+		this.vertices = new ArrayBuffer<Float>(vertices, 3);
 		this.indices = new ElementArrayBuffer(indices);
 	}
 	
@@ -27,15 +57,15 @@ public class Component {
 		
 		// Load information for the drawElements call
 		vertices.use(program);
-		normals.use(program);
-		tex.use(program);
+		if (normals != null) normals.use(program);
+		if (tex!= null) tex.use(program);
 		
 		// Draw
 		indices.draw(mode);
 		
 		// Unload information
 		vertices.unuse(program);
-		normals.unuse(program);
-		tex.unuse(program);
+		if (normals != null) normals.unuse(program);
+		if (normals != null) tex.unuse(program);
 	}
 }
