@@ -37,7 +37,8 @@ public class MainRenderer implements Renderer {
         program.use();
         
         // Set transformation. Using iVars to avoid allocation
-        Matrix.multiplyMM(mvp, 0, projection, 0, view, 0);
+//        Matrix.multiplyMM(mvp, 0, projection, 0, view, 0);
+        Matrix.multiplyMM(mvp, 0, projection, 0, Camera.getView(), 0);
         program.setMVP(mvp);
         
         // Draw the test object

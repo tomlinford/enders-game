@@ -10,29 +10,58 @@ import java.util.concurrent.BlockingQueue;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
+import android.support.v4.view.GestureDetectorCompat;
+import android.support.v4.view.MotionEventCompat;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 
 public class MainGLSurfaceView extends GLSurfaceView {
 	
 	// Java's producer/consumer data structure
-	BlockingQueue<String> bq = new ArrayBlockingQueue<String>(5);
+	private BlockingQueue<String> bq = new ArrayBlockingQueue<String>(5);
+	
+	private MainRenderer renderer;
 
 	public MainGLSurfaceView(Context context) {
 		super(context);
+		Camera.init();
 		setEGLContextClientVersion(2);
 		setDebugFlags(DEBUG_CHECK_GL_ERROR);
-		setRenderer(new MainRenderer(context));
+		renderer = new MainRenderer(context);
+		setRenderer(renderer);
 		setRenderMode(RENDERMODE_WHEN_DIRTY);
 		new Thread(new ClientThread()).start();
 	}
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent e) {
-		try {
-			bq.put("" + e.getX() + " " + e.getY());
-		} catch (InterruptedException e1) { }
-		return super.onTouchEvent(e);
+		int action = MotionEventCompat.getActionMasked(e);
+		
+		Camera.moveForward(.1f);
+		requestRender();
+		
+		switch (action) {
+		case MotionEvent.ACTION_DOWN:
+			try {
+				bq.put("down " + e.getX() + " " + e.getY());
+			} catch (InterruptedException e1) {}
+			return true;
+		case MotionEvent.ACTION_UP:
+			try {
+				bq.put("up " + e.getX() + " " + e.getY());
+			} catch (InterruptedException e1) {}
+			return true;
+		case MotionEvent.ACTION_MOVE:
+			try {
+				if (e.getPointerCount() == 2)
+					bq.put("multitouch with two points");
+//				bq.put("up " + e.getX() + " " + e.getY());
+			} catch (InterruptedException e1) {}
+			return true;
+		default:
+			return super.onTouchEvent(e);
+		}
 	}
 	
 	/**

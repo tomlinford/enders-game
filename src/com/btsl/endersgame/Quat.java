@@ -36,6 +36,20 @@ public class Quat {
 	}
 	
 	/**
+	 * Copy over to res from q
+	 * @param res
+	 * @param resOffset
+	 * @param q
+	 * @param offset
+	 */
+	public static void setFromQuatQ(float[] res, int resOffset, float[] q, int offset) {
+		res[resOffset] = q[offset];
+		res[resOffset + 1] = q[offset + 1];
+		res[resOffset + 2] = q[offset + 2];
+		res[resOffset + 3] = q[offset + 3];
+	}
+	
+	/**
 	 * Negate the quaternion q
 	 * @param q
 	 * @param offset
@@ -99,6 +113,45 @@ public class Quat {
 	    res[resOffset + 1] = lhs[lhsOffset] * rhs[rhsOffset + 1] + lhs[lhsOffset + 1] * rhs[rhsOffset] + lhs[lhsOffset + 2] * rhs[rhsOffset + 3] - lhs[lhsOffset + 3] * rhs[rhsOffset + 2];
 	    res[resOffset + 2] = lhs[lhsOffset] * rhs[rhsOffset + 2] - lhs[lhsOffset + 1] * rhs[rhsOffset + 3] + lhs[lhsOffset + 2] * rhs[rhsOffset] + lhs[lhsOffset + 3] * rhs[rhsOffset + 1];
 	    res[resOffset + 3] = lhs[lhsOffset] * rhs[rhsOffset + 3] + lhs[lhsOffset + 1] * rhs[rhsOffset + 2] - lhs[lhsOffset + 2] * rhs[rhsOffset + 1] + lhs[lhsOffset + 3] * rhs[rhsOffset];
+	}
+	
+	/**
+	 * Normalizes the quaternion q
+	 * @param q
+	 * @param offset
+	 */
+	public static void normalizeQ(float[] q, int offset) {
+		float length = lengthQ(q, offset);
+		if (length <= 0.0f) {
+			setIdentityQ(q, offset);
+		} else {
+			q[offset] /= length;
+			q[offset + 1] /= length;
+			q[offset + 2] /= length;
+			q[offset + 3] /= length;
+		}
+	}
+	
+	/**
+	 * Extra array for rotateQV3's usage
+	 */
+	private static float[] rotateExtras = new float[12];
+	
+	/**
+	 * Rotate the vector3 v by q and store the result back into v
+	 * @param q
+	 * @param qOffset
+	 * @param v
+	 * @param vOffset
+	 */
+	public synchronized static void rotateQV3(float[] q, int qOffset, float[] v, int vOffset) {
+		setFromVectorQ(rotateExtras, 0, v, vOffset);
+		crossQ(rotateExtras, 4, q, qOffset, rotateExtras, 0);
+		conjugateQ(rotateExtras, 8, q, qOffset);
+		crossQ(rotateExtras, 0, rotateExtras, 4, rotateExtras, 8);
+		v[vOffset] = rotateExtras[1];
+		v[vOffset + 1] = rotateExtras[2];
+		v[vOffset + 2] = rotateExtras[3];
 	}
 
 }
