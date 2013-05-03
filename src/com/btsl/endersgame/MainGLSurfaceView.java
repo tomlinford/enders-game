@@ -34,30 +34,49 @@ public class MainGLSurfaceView extends GLSurfaceView {
 		new Thread(new ClientThread()).start();
 	}
 	
+	/**
+	 * Locations of where screen is being touched
+	 */
+	private float prevX, prevY;
+	
+	/**
+	 * Max number of fingers on the screen for one swipe
+	 */
+	private int numPointers;
+	
 	@Override
 	public boolean onTouchEvent(MotionEvent e) {
 		int action = MotionEventCompat.getActionMasked(e);
 		
-		Camera.moveForward(.1f);
-		requestRender();
-		
 		switch (action) {
 		case MotionEvent.ACTION_DOWN:
-			try {
-				bq.put("down " + e.getX() + " " + e.getY());
-			} catch (InterruptedException e1) {}
+			prevX = e.getX();
+			prevY = e.getY();
+			numPointers = e.getPointerCount();
 			return true;
 		case MotionEvent.ACTION_UP:
-			try {
-				bq.put("up " + e.getX() + " " + e.getY());
-			} catch (InterruptedException e1) {}
+			numPointers = 0;
 			return true;
 		case MotionEvent.ACTION_MOVE:
-			try {
-				if (e.getPointerCount() == 2)
-					bq.put("multitouch with two points");
-//				bq.put("up " + e.getX() + " " + e.getY());
-			} catch (InterruptedException e1) {}
+			float x = e.getX();
+			float y = e.getY();
+			if (e.getPointerCount() != numPointers) {
+				numPointers = e.getPointerCount();
+			} else {
+				// currently, this is set up to look around with one finger, move around
+				// with two, and roll with three
+				if (numPointers == 2) {
+					Camera.move((prevY - y) / 100f, (prevX - x) / 100f);
+				} else if (numPointers == 1) {
+					Camera.rotate((y - prevY) / 400f, (x - prevX) / 400f, 0f);
+				} else if (numPointers == 3) {
+					Camera.rotate(0f, 0f, (x - prevX) / 300f);
+				}
+				// re-render the scene
+				requestRender();
+			}
+			prevX = x;
+			prevY = y;
 			return true;
 		default:
 			return super.onTouchEvent(e);
@@ -89,6 +108,10 @@ public class MainGLSurfaceView extends GLSurfaceView {
 				try {
 					if (socket != null)socket.close();
 				} catch (IOException e1) { }
+				for (;;)
+					try {
+						bq.take();
+					} catch (InterruptedException e1) {}
 			}
 		}
 	}

@@ -10,6 +10,22 @@ package com.btsl.endersgame;
 public class Quat {
 	
 	/**
+	 * Initialize quaternion from given w, x, y, and z
+	 * @param q
+	 * @param offset
+	 * @param w
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
+	public static void setQ(float[] q, int offset, float w, float x, float y, float z) {
+		q[offset] = w;
+		q[offset + 1] = x;
+		q[offset + 2] = y;
+		q[offset + 3] = z;
+	}
+	
+	/**
 	 * Set q to be the identity quaternion
 	 * @param q
 	 * @param offset
