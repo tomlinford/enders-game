@@ -10,30 +10,78 @@ import java.util.concurrent.BlockingQueue;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
+import android.support.v4.view.GestureDetectorCompat;
+import android.support.v4.view.MotionEventCompat;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 
 public class MainGLSurfaceView extends GLSurfaceView {
 	
 	// Java's producer/consumer data structure
-	BlockingQueue<String> bq = new ArrayBlockingQueue<String>(5);
+	private BlockingQueue<String> bq = new ArrayBlockingQueue<String>(5);
+	
+	private MainRenderer renderer;
 
 	public MainGLSurfaceView(Context context) {
 		super(context);
+		Camera.init();
 		setEGLContextClientVersion(2);
 		setDebugFlags(DEBUG_CHECK_GL_ERROR);
-		setRenderer(new MainRenderer(context));
+		renderer = new MainRenderer(context);
+		setRenderer(renderer);
 		setRenderMode(RENDERMODE_WHEN_DIRTY);
 		new Thread(new ClientThread()).start();
 	}
 	
+	/**
+	 * Locations of where screen is being touched
+	 */
+	private float prevX, prevY;
+	
+	/**
+	 * Max number of fingers on the screen for one swipe
+	 */
+	private int numPointers;
+	
 	@Override
 	public boolean onTouchEvent(MotionEvent e) {
-		try {
-			bq.put("" + e.getX() + " " + e.getY());
-		} 
-		catch (InterruptedException e1) {}
-		return super.onTouchEvent(e);
+		
+		int action = MotionEventCompat.getActionMasked(e);
+		
+		switch (action) {
+		case MotionEvent.ACTION_DOWN:
+			prevX = e.getX();
+			prevY = e.getY();
+			numPointers = e.getPointerCount();
+			return true;
+		case MotionEvent.ACTION_UP:
+			numPointers = 0;
+			return true;
+		case MotionEvent.ACTION_MOVE:
+			float x = e.getX();
+			float y = e.getY();
+			if (e.getPointerCount() != numPointers) {
+				numPointers = e.getPointerCount();
+			} else {
+				// currently, this is set up to look around with one finger, move around
+				// with two, and roll with three
+				if (numPointers == 2) {
+					Camera.move((prevY - y) / 100f, (prevX - x) / 100f);
+				} else if (numPointers == 1) {
+					Camera.rotate((y - prevY) / 400f, (x - prevX) / 400f, 0f);
+				} else if (numPointers == 3) {
+					Camera.rotate(0f, 0f, (x - prevX) / 300f);
+				}
+				// re-render the scene
+				requestRender();
+			}
+			prevX = x;
+			prevY = y;
+			return true;
+		default:
+			return super.onTouchEvent(e);
+		}
 	}
 	
 	/**
@@ -58,10 +106,12 @@ public class MainGLSurfaceView extends GLSurfaceView {
 				
 				// there's probably a better way to do this..
 				try {
-					if (socket != null)
-						socket.close();
-				} 
-				catch (IOException e1) {}
+					if (socket != null) socket.close();
+				} catch (IOException e1) { }
+				for (;;)
+					try {
+						bq.take();
+					} catch (InterruptedException e1) {}
 			}
 		}
 	}

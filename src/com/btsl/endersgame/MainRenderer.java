@@ -37,11 +37,15 @@ public class MainRenderer implements Renderer {
         program.use();
         
         // Set transformation. Using iVars to avoid allocation
-        Matrix.multiplyMM(mvp, 0, projection, 0, view, 0);
+//        Matrix.multiplyMM(mvp, 0, projection, 0, view, 0);
+        Matrix.multiplyMM(mvp, 0, projection, 0, Camera.getView(), 0);
         program.setMVP(mvp);
         
         // Draw the test object
-        triangleComponent.Draw(program, GLES20.GL_TRIANGLES);
+//        triangleComponent.Draw(program, GLES20.GL_TRIANGLES);
+        
+        // Draw the bunny
+        bunnyMB.draw(program, GLES20.GL_TRIANGLES);
 	}
 
 	@Override
@@ -58,6 +62,8 @@ public class MainRenderer implements Renderer {
 		
 		triangleComponent = new Component(Arrays.asList(TRIANGLE_VERTICES_DATA),
 				Arrays.asList(TRIANGLE_NORMALS_DATA), Arrays.asList(TRIANGLE_ELEM_DATA));
+		
+		bunnyMB = OBJFile.createComponentBufferFromFile("bunny.obj", context, "vertexCoordinates", null, null);
 		
 		// Set view properties
 		Matrix.setLookAtM(
@@ -84,5 +90,6 @@ public class MainRenderer implements Renderer {
     
     private Program program;
     private Component triangleComponent;
+    private ComponentBuffer bunnyMB;
 
 }
