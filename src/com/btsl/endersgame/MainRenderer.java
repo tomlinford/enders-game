@@ -63,7 +63,7 @@ public class MainRenderer implements Renderer {
 		triangleComponent = new Component(Arrays.asList(TRIANGLE_VERTICES_DATA),
 				Arrays.asList(TRIANGLE_NORMALS_DATA), Arrays.asList(TRIANGLE_ELEM_DATA));
 		
-		bunnyMB = OBJFile.createModelBufferFromFile("bunny.obj", context, "vertexCoordinates", null, null);
+		bunnyMB = OBJFile.createComponentBufferFromFile("bunny.obj", context, "vertexCoordinates", null, null);
 		
 		// Set view properties
 		Matrix.setLookAtM(
@@ -93,6 +93,6 @@ public class MainRenderer implements Renderer {
 //    private ArrayBuffer<Float> triangleNormalAB;
 //    private ElementArrayBuffer triangleEAB;
     private Component triangleComponent;
-    private ModelBuffer bunnyMB;
+    private ComponentBuffer bunnyMB;
 
 }

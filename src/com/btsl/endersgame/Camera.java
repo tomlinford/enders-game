@@ -17,7 +17,7 @@ public class Camera {
 	/**
 	 * Orientation of camera
 	 */
-	private static float[] orientation = new float[16];
+	private static float[] orientation = new float[4];
 	
 	/**
 	 * Direction vector

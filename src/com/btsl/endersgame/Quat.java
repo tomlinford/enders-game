@@ -169,5 +169,61 @@ public class Quat {
 		v[vOffset + 1] = rotateExtras[2];
 		v[vOffset + 2] = rotateExtras[3];
 	}
+	
+	/**
+	 * Scale q by s
+	 * @param q
+	 * @param offset
+	 * @param s
+	 */
+	public static void scaleQ(float[] q, int offset, float s) {
+		for (int i = 0; i < 4; i++) q[offset + i] *= s;
+	}
+	
+	/**
+	 * Add q to res
+	 * @param res
+	 * @param resOffset
+	 * @param q
+	 * @param qOffset
+	 */
+	public static void addQ(float[] res, int resOffset, float[]q, int qOffset) {
+		for (int i = 0; i < 4; i++) res[resOffset + i] += q[qOffset + i];
+	}
+	
+	/**
+	 * Extra array for slerp's usage
+	 */
+	private static float[] slerpExtras = new float[4];
+	
+	/**
+	 * Calculate the spherical linear interpretation between q1 and q2
+	 * @param res
+	 * @param resOffset
+	 * @param q1
+	 * @param q1Offset
+	 * @param q2
+	 * @param q2Offset
+	 * @param u
+	 * @param a alpha
+	 */
+	public synchronized static void slerp(float[] res, int resOffset, float[] q1, int q1Offset, float[] q2, int q2Offset, float u, float a) {
+		float sa, c1, c2;
+		
+		sa = (float) Math.sin(a);
+		if (sa < 0.001f) {
+			c1 = 1 - u;
+			c2 = u;
+		} else {
+			c1 = (float) Math.sin((1 - u) * a) / sa;
+			c2 = (float) Math.sin(u * a) / sa;
+		}
+		
+		setFromQuatQ(res, resOffset, q1, q1Offset);
+		scaleQ(res, resOffset, c1);
+		setFromQuatQ(slerpExtras, 0, q2, q2Offset);
+		scaleQ(slerpExtras, 0, c2);
+		addQ(res, resOffset, slerpExtras, 0);
+	}
 
 }

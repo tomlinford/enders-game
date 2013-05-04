@@ -40,7 +40,7 @@ public class OBJFile {
 	 * @param nAttrib normal attribute name
 	 * @return
 	 */
-	public static ModelBuffer createModelBufferFromFile(String filename, Context context,
+	public static ComponentBuffer createComponentBufferFromFile(String filename, Context context,
 			String vAttrib, String tAttrib, String nAttrib) {
 		OBJFile objFile = new OBJFile(filename, context);
 		ElementArrayBuffer elementBuffer = new ElementArrayBuffer(objFile.indices);
@@ -56,7 +56,7 @@ public class OBJFile {
 			normalBuffer = new ArrayBuffer<Float>(objFile.normals, 3);
 			normalBuffer.setAttribute(nAttrib);
 		}
-		return new ModelBuffer(vertexBuffer, textureBuffer, normalBuffer, elementBuffer);
+		return new ComponentBuffer(vertexBuffer, textureBuffer, normalBuffer, elementBuffer);
 	}
 	
 	/**
