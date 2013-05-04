@@ -116,6 +116,14 @@ public class Camera {
 	}
 	
 	/**
+	 * 
+	 * @return float array containing position of Camera
+	 */
+	public static float[] getPosition() {
+		return loc;
+	}
+	
+	/**
 	 * Helper that calculates the current view matrix
 	 */
 	public static void calculateView() {

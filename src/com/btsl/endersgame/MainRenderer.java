@@ -30,21 +30,15 @@ public class MainRenderer implements Renderer {
 		
 		// Clear frame
 		GLES20.glClearColor(0.1f, 0.1f, .1f, 1.0f);
+		GLES20.glClearDepthf(1.0f);
         GLES20.glClear( GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
         
         // Use our custom shader
         program.use();
+        program.setUniform("worldspaceCameraPosition", Camera.getPosition()[0],
+        		Camera.getPosition()[1], Camera.getPosition()[2]);
         
-        // Set transformation. Using iVars to avoid allocation
-//        Matrix.multiplyMM(mvp, 0, projection, 0, view, 0);
         Matrix.multiplyMM(viewProjection, 0, projection, 0, Camera.getView(), 0);
-//        program.setMVP(mvp);
-        
-        // Draw the test object
-//        triangleComponent.Draw(program, GLES20.GL_TRIANGLES);
-        
-        // Draw the bunny
-//        bunny.draw(program, GLES20.GL_TRIANGLES, viewProjection, 0);
         
         cube.draw(program, GLES20.GL_TRIANGLES, viewProjection, 0);
 	}
@@ -58,6 +52,9 @@ public class MainRenderer implements Renderer {
 
 	@Override
 	public void onSurfaceCreated(GL10 unused, EGLConfig config) {
+		GLES20.glEnable( GLES20.GL_DEPTH_TEST );
+		GLES20.glDepthFunc( GLES20.GL_LEQUAL );
+		GLES20.glDepthMask( true );
 		// Create our shader program
 //		program = new Program("default.vert", "default.frag", context);
 		program = new Program("phong_vert.glsl", "phong_frag.glsl", context);    

@@ -13,5 +13,5 @@ void main() {
 	gl_Position = (MVP * vec4(vertexCoordinates, 1));
 	worldspacePosition = (M * vec4(vertexCoordinates, 1)).xyz;
 	textureCoord = texCoordinates;
-	worldspaceNormal = (M * vec4(normalCoordinates, 1)).xyz;
+	worldspaceNormal = (M * vec4(normalCoordinates, 0)).xyz;
 }

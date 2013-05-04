@@ -10,10 +10,8 @@ import java.util.concurrent.BlockingQueue;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
-import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 
 public class MainGLSurfaceView extends GLSurfaceView {
@@ -21,12 +19,14 @@ public class MainGLSurfaceView extends GLSurfaceView {
 	// Java's producer/consumer data structure
 	private BlockingQueue<String> bq = new ArrayBlockingQueue<String>(5);
 	
+	// later, we'll be able to call methods on renderer
 	private MainRenderer renderer;
 
 	public MainGLSurfaceView(Context context) {
 		super(context);
 		Camera.init();
 		setEGLContextClientVersion(2);
+		setEGLConfigChooser(8, 8, 8, 8, 16, 0);
 		setDebugFlags(DEBUG_CHECK_GL_ERROR);
 		renderer = new MainRenderer(context);
 		setRenderer(renderer);

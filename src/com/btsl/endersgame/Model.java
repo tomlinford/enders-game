@@ -67,6 +67,7 @@ public class Model {
 	public void draw(Program program, int mode, float[] viewProjection, int offset) {
 		Matrix.multiplyMM(mvp, 0, viewProjection, offset, model, 0);
 		program.setMVP(mvp);
+		program.setM(model);
 		program.setUniform(mat);
 		modelBuf.draw(program, mode);
 	}

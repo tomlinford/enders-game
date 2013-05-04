@@ -41,7 +41,7 @@ void main() {
     vec3 materialSpec = mat.Ks;
     float shininess = mat.Ns;
     lightSource = vec3(5, 0, 5);
-    lightColor = vec3(1, 1, 1);
+    lightColor = vec3(1, 1, 3);
 
     vec3 L = normalize(lightSource - worldspacePosition);
     vec3 N = normalize(worldspaceNormal);
@@ -53,6 +53,6 @@ void main() {
     vec3 spec = pow(clamp(-dot(V, R), 0., 1.), shininess) * materialSpec * lightColor;// / sqrt(dist + 1);
     
     gl_FragColor = vec4(amb + diff + spec, 1);
-    if (amb.r < .01)
-    	gl_FragColor = vec4(1, 0, 0, 1);
+    //if (worldspaceNormal.x < .01)
+    	//gl_FragColor = vec4(1, 0, 0, 1);
 }

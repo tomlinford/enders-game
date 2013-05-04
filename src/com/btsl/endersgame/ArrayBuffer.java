@@ -35,21 +35,25 @@ public class ArrayBuffer<T> extends DataBuffer<T> {
             return;
         }
 		
-		if (location < 0) {
-            location = program.getAttribLocation(attribute);
-            if (location < 0) {
-    			Log.e("Buffer", "Attempted to bind buffer to an attribute not found in the current shader program");
-                return;
-            }
-        }
+//		if (location < 0) {
+//            location = program.getAttribLocation(attribute);
+//            if (location < 0) {
+//    			Log.e("Buffer", "Attempted to bind buffer to an attribute not found in the current shader program");
+//                return;
+//            }
+//        }
 		
-		GLES20.glEnableVertexAttribArray(location);
+		GLES20.glEnableVertexAttribArray(getLoc(program));
 		bind();
-		GLES20.glVertexAttribPointer(location, vertexSize, dataType, false, 0, 0);
+		GLES20.glVertexAttribPointer(getLoc(program), vertexSize, dataType, false, 0, 0);
 	}
 	
 	public void unuse(Program program) {
-		GLES20.glDisableVertexAttribArray(location);
+		GLES20.glDisableVertexAttribArray(getLoc(program));
+	}
+	
+	private int getLoc(Program p) {
+		return p.getAttribLocation(attribute);
 	}
 	
 }
