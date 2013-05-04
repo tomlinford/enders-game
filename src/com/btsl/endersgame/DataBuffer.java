@@ -51,6 +51,13 @@ public abstract class DataBuffer<T> extends AbstractBuffer {
 		}
 		unbind();
 	}
+	
+	@Override
+	public void delete() {
+		int[] buffers = new int[1];
+		buffers[0] = id;
+		GLES20.glDeleteBuffers(1, buffers, 0);
+	}
 
 	/* Overloaded methods for converting Lists into arrays of primitives */
 

@@ -20,16 +20,25 @@ public class Texture {
 	 */
 	Buffer pixels;
 	
-	/* Creates a blank texture */
+	/**
+	 * Creates a blank texture
+	 * @param width
+	 * @param height
+	 */
 	public Texture(int width, int height) {
 		this(width, height, GLES20.GL_RGBA, null);
 	}
 	
-	/* Creates a texture of the given width and height
+	/**
+	 * Creates a texture of the given width and height
 	 * from the given pixel data. 'format' specifies the
 	 * format of the data in 'pixels'. This should be
 	 * GLES20.RGBA or GLES20.RGBA.
-	 * */
+	 * @param width
+	 * @param height
+	 * @param format
+	 * @param pixels
+	 */
 	public Texture(int width, int height, int format, Buffer pixels) {
 		id = genTexture();
 		this.width = width;
@@ -38,13 +47,19 @@ public class Texture {
 		this.pixels = pixels;
 	}
 	
-	/* Creates a new Texture from a file */
+	/**
+	 * Creates a new Texture from a file
+	 * @param filename
+	 * @param context
+	 */
 	public Texture(String filename, Context context)
 	{
 		id = genTexture();
 	}
 	
-	/* Loads texture data into the GPU buffer */
+	/**
+	 * Loads texture data into the GPU buffer
+	 */
 	public void bind()
 	{	
 		GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, id);
@@ -74,7 +89,10 @@ public class Texture {
 	    GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
 	}
 	
-	/* Generates a texture buffer */
+	/**
+	 * Generates a texture buffer
+	 * @return
+	 */
 	protected static int genTexture()
 	{
 		int[] buf = new int[1];
@@ -82,7 +100,10 @@ public class Texture {
 		return buf[0];
 	}
 	
-	/* Returns this texture's ID */
+	/**
+	 * Returns this texture's ID
+	 * @return
+	 */
 	public int getID() {
 		return id;
 	}

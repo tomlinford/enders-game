@@ -15,12 +15,25 @@ public class Program {
     private final int vID;
     private final int pID;
 	
+    /**
+     * Creates a shader program using the given vertex and fragment shader
+     * source. Compiles and links the vertex and fragment shaders.
+     * @param vertexShaderFilename
+     * @param fragmentShaderFilename
+     * @param context
+     */
 	public Program(String vertexShaderFilename, String fragmentShaderFilename,
 				   Context context) {
 		this(new Shader(vertexShaderFilename, context, GLES20.GL_VERTEX_SHADER),
 			new Shader(fragmentShaderFilename, context, GLES20.GL_FRAGMENT_SHADER));
 	}
 	
+	/**
+	 * Creates a shader program using the given vertex and fragment shader
+	 * objects.
+	 * @param vertexShader
+	 * @param fragmentShader
+	 */
 	public Program(Shader vertexShader, Shader fragmentShader) {
 		id = GLES20.glCreateProgram();
 		
@@ -44,12 +57,17 @@ public class Program {
         pID = getUniformLocation("P");
 	}
 	
-    /* Call to use this shader program for subsequent rendering calls */
+    /**
+     * Call to use this shader program for subsequent rendering calls
+     */
 	public void use() {
 		GLES20.glUseProgram(id);
 	}
 	
-    /* Fetches the location for a given attribute in this shader program */
+    /**
+     * Fetches the location for a given attribute in this shader program
+     * @param name
+     */
 	public int getAttribLocation(String name) {
 		int location = GLES20.glGetAttribLocation(id, name);
         if (location < 0)
@@ -57,7 +75,10 @@ public class Program {
         return location;
 	}
 	
-    /* Fetches the location for a given uniform in this shader program */
+    /**
+     * Fetches the location for a given uniform in this shader program
+     * @param name
+     */
 	public int getUniformLocation(String name) {
 		int location = GLES20.glGetUniformLocation(id, name);
         if (location < 0)

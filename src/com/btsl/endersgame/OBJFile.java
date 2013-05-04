@@ -24,11 +24,11 @@ import android.util.Log;
  *
  */
 public class OBJFile {
-	
-	private ArrayList<Integer> indices = new ArrayList<Integer>();
-	private ArrayList<Float> vertCoords = new ArrayList<Float>();
-	private ArrayList<Float> texCoords = new ArrayList<Float>();
-	private ArrayList<Float> normals = new ArrayList<Float>();
+
+	public ArrayList<Integer> indices = new ArrayList<Integer>();
+	public ArrayList<Float> vertCoords = new ArrayList<Float>();
+	public ArrayList<Float> texCoords = new ArrayList<Float>();
+	public ArrayList<Float> normals = new ArrayList<Float>();
 	private Material mat;
 	
 	/**
@@ -41,24 +41,10 @@ public class OBJFile {
 	 * @param nAttrib normal attribute name
 	 * @return
 	 */
-	public static Model createComponentBufferFromFile(String filename, Context context,
+	public static Model createModelFromFile(String filename, Context context,
 			String vAttrib, String tAttrib, String nAttrib) {
 		OBJFile objFile = new OBJFile(filename, context);
-		ElementArrayBuffer elementBuffer = new ElementArrayBuffer(objFile.indices);
-		ArrayBuffer<Float> vertexBuffer = new ArrayBuffer<Float>(objFile.vertCoords, 3);
-		vertexBuffer.setAttribute(vAttrib);
-		ArrayBuffer<Float> textureBuffer = null;
-		if (!objFile.texCoords.isEmpty()) {
-			textureBuffer = new ArrayBuffer<Float>(objFile.texCoords, 2);
-			textureBuffer.setAttribute(tAttrib);
-		}
-		ArrayBuffer<Float> normalBuffer = null;
-		if (!objFile.normals.isEmpty()) {
-			normalBuffer = new ArrayBuffer<Float>(objFile.normals, 3);
-			normalBuffer.setAttribute(nAttrib);
-		}
-		ModelBuffer mb = new ModelBuffer(vertexBuffer, textureBuffer, normalBuffer, elementBuffer);
-		return new Model(mb, objFile.mat);
+		return objFile.genModel(vAttrib, tAttrib, nAttrib);
 	}
 	
 	/**
@@ -69,7 +55,7 @@ public class OBJFile {
 	public OBJFile(String filename, Context context) {
 		ArrayList<Float> vertCoords = new ArrayList<Float>();
 		ArrayList<Float> texCoords = new ArrayList<Float>();
-		ArrayList<Float> normals = new ArrayList<Float>();
+		ArrayList<Float> normalCoords = new ArrayList<Float>();
 		ArrayList<VertexIndex> vertexIndices = new ArrayList<VertexIndex>();
 		Material.MTLFile mtlFile = null;
 		
@@ -85,7 +71,7 @@ public class OBJFile {
 				} else if (arr[0].equals("vt")) {
 					addFloats(arr, texCoords);
 				} else if (arr[0].equals("vn")) {
-					addFloats(arr, normals);
+					addFloats(arr, normalCoords);
 				} else if (arr[0].equals("f")) {
 					addFaces(arr, vertexIndices);
 				} else if (arr[0].equals("mtllib")) {
@@ -116,10 +102,34 @@ public class OBJFile {
 						this.texCoords.add(texCoords.get(vi.t * 2 + i));
 				if (!normals.isEmpty())
 					for (int i = 0; i < 3; i++)
-						this.normals.add(normals.get(vi.n * 3 + i));
+						this.normals.add(normalCoords.get(vi.n * 3 + i));
 			}
 		}
 		if (mtlFile != null) mat = mtlFile.first();
+	}
+	
+	/**
+	 * Generate a model from instance of OBJFile
+	 * @param vAttrib
+	 * @param tAttrib
+	 * @param nAttrib
+	 * @return
+	 */
+	public Model genModel(String vAttrib, String tAttrib, String nAttrib) {
+		ElementArrayBuffer elementBuffer = new ElementArrayBuffer(indices);
+		ArrayBuffer<Float> vertexBuffer = new ArrayBuffer<Float>(vertCoords, 3);
+		vertexBuffer.setAttribute(vAttrib);
+		ArrayBuffer<Float> textureBuffer = null;
+		if (!texCoords.isEmpty()) {
+			textureBuffer = new ArrayBuffer<Float>(texCoords, 2);
+			textureBuffer.setAttribute(tAttrib);
+		}
+		ArrayBuffer<Float> normalBuffer = null;
+		if (!normals.isEmpty()) {
+			normalBuffer = new ArrayBuffer<Float>(normals, 3);
+			normalBuffer.setAttribute(nAttrib);
+		}
+		return new Model(new ModelBuffer(vertexBuffer, textureBuffer, normalBuffer, elementBuffer), mat);
 	}
 	
 	/**
@@ -192,6 +202,10 @@ public class OBJFile {
 				return false;
 			return true;
 		}
+	}
+	
+	private static void parseMaterialFile(String filename) {
+		
 	}
 
 }

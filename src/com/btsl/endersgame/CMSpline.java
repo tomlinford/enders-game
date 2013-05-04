@@ -2,17 +2,20 @@ package com.btsl.endersgame;
 
 import android.opengl.Matrix;
 
+/**
+ * @author bhnascar
+ *
+ */
 public class CMSpline {
 	
 	// Single dimension control points
 	float[] c;
 	
-	// 3 dimension control points
+	// 3 dimension control points, 1 set per axis.
 	float[] x_c, y_c, z_c;
 	
 	// Column major
-	public static float[] weights =
-	{
+	public static float[] weights = {
 	    0.0f, -0.5f, 1.0f, -0.5f,
 	    1.0f, 0.0f, -2.5f, 1.5f,
 	    0.0f, 0.5f, 2.0f, -1.5f,

@@ -59,20 +59,20 @@ public class MainRenderer implements Renderer {
 //		program = new Program("default.vert", "default.frag", context);
 		program = new Program("phong_vert.glsl", "phong_frag.glsl", context);    
 		
-		triangleComponent = new Model(Arrays.asList(TRIANGLE_VERTICES_DATA),
-				Arrays.asList(TRIANGLE_NORMALS_DATA), Arrays.asList(TRIANGLE_ELEM_DATA));
+//		triangleComponent = new Model(Arrays.asList(TRIANGLE_VERTICES_DATA),
+//				Arrays.asList(TRIANGLE_NORMALS_DATA), Arrays.asList(TRIANGLE_ELEM_DATA));
 		
 //		bunny = OBJFile.createComponentBufferFromFile("bunny.obj", context, "vertexCoordinates", null, null);
 		
-		cube = OBJFile.createComponentBufferFromFile("cube.obj", context, "vertexCoordinates",
+		cube = OBJFile.createModelFromFile("cube.obj", context, "vertexCoordinates",
 				"texCoordinates", "normalCoordinates");
 		
 		// Set view properties
 		Matrix.setLookAtM(
 			view, 0,
-			0.0f, 0.0f, -5.0f, 	 // Eye position
+			0.0f, 0.0f, -5.0f, 	// Eye position
 			0.0f, 0.0f, 0.0f,   // Eye target
-			0.0f, 1.0f, 0.0f);   // Up vector
+			0.0f, 1.0f, 0.0f);  // Up vector
 	}
 	
 
@@ -91,11 +91,8 @@ public class MainRenderer implements Renderer {
     private final Integer[] TRIANGLE_ELEM_DATA = { 0, 1, 2 };
     
     private Program program;
-//    private ArrayBuffer<Float> triangleAB;
-//    private ArrayBuffer<Float> triangleNormalAB;
-//    private ElementArrayBuffer triangleEAB;
-    private Model triangleComponent;
-    private Model bunny;
+//    private Model triangleComponent;
+//    private Model bunny;
     private Model cube;
 
 }
