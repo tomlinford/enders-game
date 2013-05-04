@@ -1,7 +1,9 @@
 package com.btsl.endersgame;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Scanner;
 
 import android.content.Context;
@@ -21,8 +23,10 @@ public class Shader {
         // Read program source into a string
 		String source = "";
 		try {
-			InputStream is = context.getAssets().open(filename);
-			source = new Scanner(is).useDelimiter("\\Z").next();
+			StringBuilder sb = new StringBuilder();
+			BufferedReader rd = new BufferedReader(new InputStreamReader(context.getAssets().open(filename)));
+			for (String line = rd.readLine(); line != null; line = rd.readLine()) sb.append(line + "\n");
+			source = sb.toString();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

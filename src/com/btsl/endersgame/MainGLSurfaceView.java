@@ -66,7 +66,7 @@ public class MainGLSurfaceView extends GLSurfaceView {
 				// currently, this is set up to look around with one finger, move around
 				// with two, and roll with three
 				if (numPointers == 2) {
-					Camera.move((prevY - y) / 100f, (prevX - x) / 100f);
+					Camera.move((prevY - y) / 100f, -(prevX - x) / 100f);
 				} else if (numPointers == 1) {
 					Camera.rotate((y - prevY) / 400f, (x - prevX) / 400f, 0f);
 				} else if (numPointers == 3) {

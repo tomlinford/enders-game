@@ -19,8 +19,7 @@ public class MainRenderer implements Renderer {
 	/* Transformation matrices */
 	private float[] projection = new float[16];
 	private float[] view = new float[16];
-	private float[] model = new float[16];
-	private float[] mvp = new float[16];
+	private float[] viewProjection = new float[16];
 	
 	public MainRenderer(Context context) {
 		this.context = context;
@@ -30,7 +29,7 @@ public class MainRenderer implements Renderer {
 	public void onDrawFrame(GL10 unused) {
 		
 		// Clear frame
-		GLES20.glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+		GLES20.glClearColor(0.1f, 0.1f, .1f, 1.0f);
         GLES20.glClear( GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
         
         // Use our custom shader
@@ -38,14 +37,16 @@ public class MainRenderer implements Renderer {
         
         // Set transformation. Using iVars to avoid allocation
 //        Matrix.multiplyMM(mvp, 0, projection, 0, view, 0);
-        Matrix.multiplyMM(mvp, 0, projection, 0, Camera.getView(), 0);
-        program.setMVP(mvp);
+        Matrix.multiplyMM(viewProjection, 0, projection, 0, Camera.getView(), 0);
+//        program.setMVP(mvp);
         
         // Draw the test object
 //        triangleComponent.Draw(program, GLES20.GL_TRIANGLES);
         
         // Draw the bunny
-        bunnyMB.draw(program, GLES20.GL_TRIANGLES);
+//        bunny.draw(program, GLES20.GL_TRIANGLES, viewProjection, 0);
+        
+        cube.draw(program, GLES20.GL_TRIANGLES, viewProjection, 0);
 	}
 
 	@Override
@@ -58,12 +59,16 @@ public class MainRenderer implements Renderer {
 	@Override
 	public void onSurfaceCreated(GL10 unused, EGLConfig config) {
 		// Create our shader program
-		program = new Program("default.vert", "default.frag", context);
+//		program = new Program("default.vert", "default.frag", context);
+		program = new Program("phong_vert.glsl", "phong_frag.glsl", context);    
 		
-		triangleComponent = new Component(Arrays.asList(TRIANGLE_VERTICES_DATA),
+		triangleComponent = new Model(Arrays.asList(TRIANGLE_VERTICES_DATA),
 				Arrays.asList(TRIANGLE_NORMALS_DATA), Arrays.asList(TRIANGLE_ELEM_DATA));
 		
-		bunnyMB = OBJFile.createComponentBufferFromFile("bunny.obj", context, "vertexCoordinates", null, null);
+//		bunny = OBJFile.createComponentBufferFromFile("bunny.obj", context, "vertexCoordinates", null, null);
+		
+		cube = OBJFile.createComponentBufferFromFile("cube.obj", context, "vertexCoordinates",
+				"texCoordinates", "normalCoordinates");
 		
 		// Set view properties
 		Matrix.setLookAtM(
@@ -92,7 +97,8 @@ public class MainRenderer implements Renderer {
 //    private ArrayBuffer<Float> triangleAB;
 //    private ArrayBuffer<Float> triangleNormalAB;
 //    private ElementArrayBuffer triangleEAB;
-    private Component triangleComponent;
-    private ComponentBuffer bunnyMB;
+    private Model triangleComponent;
+    private Model bunny;
+    private Model cube;
 
 }

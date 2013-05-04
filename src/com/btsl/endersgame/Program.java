@@ -112,6 +112,16 @@ public class Program {
         GLES20.glUniform1i(id, 0);
     }
     
+    public void setUniform(Material mat) {
+    	if (mat == null) return;
+    	setUniform("mat.Ns", mat.Ns);
+    	setUniform("mat.d", mat.d);
+        setUniform("mat.Ka", mat.Kar, mat.Kag, mat.Kab);
+        setUniform("mat.Kd", mat.Kdr, mat.Kdg, mat.Kdb);
+        setUniform("mat.Ks", mat.Ksr, mat.Ksg, mat.Ksb);
+        setUniform("mat.Ke", mat.Ker, mat.Keg, mat.Keb);
+    }
+    
     /* Methods for assigning values for transformation matrices
      * The location for these matrices on the GPU are stored to
      * avoid lookup every single time.

@@ -29,6 +29,7 @@ public class OBJFile {
 	private ArrayList<Float> vertCoords = new ArrayList<Float>();
 	private ArrayList<Float> texCoords = new ArrayList<Float>();
 	private ArrayList<Float> normals = new ArrayList<Float>();
+	private Material mat;
 	
 	/**
 	 * Create a ModelBuffer from a file, also must signify what the attribute names
@@ -40,7 +41,7 @@ public class OBJFile {
 	 * @param nAttrib normal attribute name
 	 * @return
 	 */
-	public static ComponentBuffer createComponentBufferFromFile(String filename, Context context,
+	public static Model createComponentBufferFromFile(String filename, Context context,
 			String vAttrib, String tAttrib, String nAttrib) {
 		OBJFile objFile = new OBJFile(filename, context);
 		ElementArrayBuffer elementBuffer = new ElementArrayBuffer(objFile.indices);
@@ -56,7 +57,8 @@ public class OBJFile {
 			normalBuffer = new ArrayBuffer<Float>(objFile.normals, 3);
 			normalBuffer.setAttribute(nAttrib);
 		}
-		return new ComponentBuffer(vertexBuffer, textureBuffer, normalBuffer, elementBuffer);
+		ModelBuffer mb = new ModelBuffer(vertexBuffer, textureBuffer, normalBuffer, elementBuffer);
+		return new Model(mb, objFile.mat);
 	}
 	
 	/**
@@ -69,6 +71,7 @@ public class OBJFile {
 		ArrayList<Float> texCoords = new ArrayList<Float>();
 		ArrayList<Float> normals = new ArrayList<Float>();
 		ArrayList<VertexIndex> vertexIndices = new ArrayList<VertexIndex>();
+		Material.MTLFile mtlFile = null;
 		
 		// read in everything from the file and store it in local ArrayLists
 		try {
@@ -85,8 +88,9 @@ public class OBJFile {
 					addFloats(arr, normals);
 				} else if (arr[0].equals("f")) {
 					addFaces(arr, vertexIndices);
+				} else if (arr[0].equals("mtllib")) {
+					mtlFile = Material.parseMTLFile(arr[1], context);
 				}
-				// TODO: other parsing facilities should be added here (such as materials)
 			}
 		} catch (IOException e) {
 			Log.e("OBJFile", "Could not open the file: " + filename);
@@ -115,6 +119,7 @@ public class OBJFile {
 						this.normals.add(normals.get(vi.n * 3 + i));
 			}
 		}
+		if (mtlFile != null) mat = mtlFile.first();
 	}
 	
 	/**
