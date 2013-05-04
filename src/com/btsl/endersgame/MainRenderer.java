@@ -1,7 +1,5 @@
 package com.btsl.endersgame;
 
-import java.util.Arrays;
-
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -40,6 +38,7 @@ public class MainRenderer implements Renderer {
         
         Matrix.multiplyMM(viewProjection, 0, projection, 0, Camera.getView(), 0);
         
+//        bunny.draw(program, GLES20.GL_TRIANGLES, viewProjection, 0);
         cube.draw(program, GLES20.GL_TRIANGLES, viewProjection, 0);
 	}
 
@@ -56,16 +55,20 @@ public class MainRenderer implements Renderer {
 		GLES20.glDepthFunc( GLES20.GL_LEQUAL );
 		GLES20.glDepthMask( true );
 		// Create our shader program
-//		program = new Program("default.vert", "default.frag", context);
-		program = new Program("phong_vert.glsl", "phong_frag.glsl", context);    
+		program = new Program("default.vert", "default.frag", context);
+//		program = new Program("phong_vert.glsl", "phong_frag.glsl", context);    
 		
 //		triangleComponent = new Model(Arrays.asList(TRIANGLE_VERTICES_DATA),
 //				Arrays.asList(TRIANGLE_NORMALS_DATA), Arrays.asList(TRIANGLE_ELEM_DATA));
 		
-//		bunny = OBJFile.createComponentBufferFromFile("bunny.obj", context, "vertexCoordinates", null, null);
+//		bunny = OBJFile.createModelFromFile("bunny.obj", context, "vertexCoordinates", null, null);
 		
-		cube = OBJFile.createModelFromFile("cube.obj", context, "vertexCoordinates",
-				"texCoordinates", "normalCoordinates");
+		OBJFile cubeOBJ = new OBJFile("cube.obj", context);
+		Subdivider.Subdivide(cubeOBJ);
+		cube = cubeOBJ.genModel("vertexCoordinates", null, null);
+		
+//		cube = OBJFile.createModelFromFile("cube.obj", context, "vertexCoordinates",
+//				"texCoordinates", "normalCoordinates");
 		
 		// Set view properties
 		Matrix.setLookAtM(
@@ -92,7 +95,7 @@ public class MainRenderer implements Renderer {
     
     private Program program;
 //    private Model triangleComponent;
-//    private Model bunny;
+    private Model bunny;
     private Model cube;
 
 }

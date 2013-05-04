@@ -100,7 +100,7 @@ public class OBJFile {
 				if (!texCoords.isEmpty())
 					for (int i = 0; i < 2; i++)
 						this.texCoords.add(texCoords.get(vi.t * 2 + i));
-				if (!normals.isEmpty())
+				if (!normalCoords.isEmpty())
 					for (int i = 0; i < 3; i++)
 						this.normals.add(normalCoords.get(vi.n * 3 + i));
 			}

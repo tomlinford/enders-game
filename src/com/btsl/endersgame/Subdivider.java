@@ -13,12 +13,12 @@ import java.util.HashSet;
 public class Subdivider {
 	
 	/* List of faces */
-	private static ArrayList<Face> faces;
+	private static ArrayList<Face> faces = new ArrayList<Face>();
 	
 	/* Map of vertices 
 	   Key: position as a vec3
 	   Value: pointer to a Vertex struct */
-	private static HashMap<Position, Vertex> vertices;
+	private static HashMap<Position, Vertex> vertices = new HashMap<Position, Vertex>();
 	
 	public static void Subdivide(OBJFile model) {
 		if (faces.size() == 0)
@@ -39,7 +39,7 @@ public class Subdivider {
 			ArrayList<Integer> vertexIndices) 
 	{
 	    // Add faces and vertices
-	    for (int i = 0; i < faces.size(); i += 3)
+	    for (int i = 0; i < vertexIndices.size(); i += 3)
 	    {
 	        // Create first vertex
 	    	Vertex v1 = AddVertex(vertCoords.get(3 * vertexIndices.get(i)),
@@ -449,7 +449,7 @@ public class Subdivider {
 		
 		public int index;
 		public Position position; 	  // Position
-		public ArrayList<Face> faces; // Associated faces
+		public ArrayList<Face> faces = new ArrayList<Face>(); // Associated faces
 		
 		public Vertex(float x, float y, float z) {
 			this.position = new Position(x, y, z);
