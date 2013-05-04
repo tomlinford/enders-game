@@ -62,9 +62,9 @@ public class MainRenderer implements Renderer {
 		// Set view properties
 		Matrix.setLookAtM(
 			view, 0,
-			0.0f, 0.0f, -5.0f, 	 // Eye position
+			0.0f, 0.0f, -5.0f, 	// Eye position
 			0.0f, 0.0f, 0.0f,   // Eye target
-			0.0f, 1.0f, 0.0f);   // Up vector
+			0.0f, 1.0f, 0.0f);  // Up vector
 	}
 	
 
@@ -83,9 +83,6 @@ public class MainRenderer implements Renderer {
     private final Integer[] TRIANGLE_ELEM_DATA = { 0, 1, 2 };
     
     private Program program;
-//    private ArrayBuffer<Float> triangleAB;
-//    private ArrayBuffer<Float> triangleNormalAB;
-//    private ElementArrayBuffer triangleEAB;
     private Component triangleComponent;
 
 }

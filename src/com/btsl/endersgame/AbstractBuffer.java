@@ -14,22 +14,30 @@ public abstract class AbstractBuffer {
 		this.size = size;
 	}
 	
-	/* Returns this buffer's ID */
+	/**
+	 * @return this buffer's ID
+	 */
 	public int getID() {
 		return id;
 	}
 	
-	/* Returns the size of this buffer. */
+	/**
+	 * @return the size of this buffer.
+	 */
 	public int getSize() {
 		return size;
 	}
 	
-	/* Binds the buffer */
+	/**
+	 * Binds the buffer
+	 */
 	public void bind() {
 		GLES20.glBindBuffer(target, id);
 	}
 	
-	/* Unbinds the buffer */
+	/**
+	 * Unbinds the buffer
+	 */
 	public void unbind() {
 		GLES20.glBindBuffer(target, 0);
 	}

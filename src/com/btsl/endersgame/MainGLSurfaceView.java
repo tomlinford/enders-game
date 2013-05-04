@@ -31,7 +31,8 @@ public class MainGLSurfaceView extends GLSurfaceView {
 	public boolean onTouchEvent(MotionEvent e) {
 		try {
 			bq.put("" + e.getX() + " " + e.getY());
-		} catch (InterruptedException e1) { }
+		} 
+		catch (InterruptedException e1) {}
 		return super.onTouchEvent(e);
 	}
 	
@@ -50,16 +51,17 @@ public class MainGLSurfaceView extends GLSurfaceView {
 				socket = new Socket(serverAddr, 1338);
 				// the OutputStreamWriter can be wrapped with a BufferedWriter (and probably should be)
 				PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
-				while (true) {
+				while (true)
 					out.println(bq.take());
-				}
 			} catch (Exception e) {
 				Log.e("ClientActivity", e.toString());
 				
 				// there's probably a better way to do this..
 				try {
-					if (socket != null)socket.close();
-				} catch (IOException e1) { }
+					if (socket != null)
+						socket.close();
+				} 
+				catch (IOException e1) {}
 			}
 		}
 	}

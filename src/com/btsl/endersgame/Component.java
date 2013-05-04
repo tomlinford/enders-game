@@ -53,9 +53,12 @@ public class Component {
 		this.indices = new ElementArrayBuffer(indices);
 	}
 	
-	/* Mode specifies which type of primitive to render, 
-	 * i.e. GLES20.GL_TRIANGLES or GLES20.GL_LINE_LOOP
-	 * */
+	/**
+	 * Draws this Component. Mode specifies which type of primitive 
+	 * to render, i.e. GLES20.GL_TRIANGLES or GLES20.GL_LINE_LOOP.
+	 * @param program
+	 * @param mode
+	 */
 	public void Draw(Program program, int mode) {
 		
 		// Load information for the drawElements call

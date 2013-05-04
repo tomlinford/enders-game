@@ -50,6 +50,7 @@ public class ArrayBuffer<T> extends DataBuffer<T> {
 	
 	public void unuse(Program program) {
 		GLES20.glDisableVertexAttribArray(location);
+		unbind();
 	}
 	
 }
