@@ -18,7 +18,7 @@ import android.util.Log;
  */
 public abstract class DataBuffer<T> extends AbstractBuffer {
 
-	public final int dataType;
+	protected final int dataType;
 
 	public DataBuffer(List<T> data, int target) {
 		super(genBuffer(), target, data.size());
