@@ -139,8 +139,10 @@ public class OBJFile {
 	 * @param al
 	 */
 	private static void addFloats(String[] arr, ArrayList<Float> al) {
-		for (int i = 1; i < arr.length; i++)
-			al.add(Float.parseFloat(arr[i]));
+		for (int i = 1; i < arr.length; i++) {
+			if (arr[i].isEmpty()) continue;
+				al.add(Float.parseFloat(arr[i]));
+		}
 	}
 	
 	/**

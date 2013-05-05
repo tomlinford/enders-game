@@ -37,8 +37,9 @@ public class MainRenderer implements Renderer {
         
         Matrix.multiplyMM(viewProjection, 0, projection, 0, Camera.getView(), 0);
         
-        // bunny.draw(program, GLES20.GL_TRIANGLES, viewProjection, 0);
-        cube.draw(program, GLES20.GL_LINE_LOOP, viewProjection, 0);
+        //bunny.draw(program, GLES20.GL_TRIANGLES, viewProjection, 0);
+        cube.draw(program, GLES20.GL_TRIANGLES, viewProjection, 0);
+        //shirt.draw(program, GLES20.GL_TRIANGLES, viewProjection, 0);
 	}
 
 	@Override
@@ -53,19 +54,18 @@ public class MainRenderer implements Renderer {
 		GLES20.glEnable( GLES20.GL_DEPTH_TEST );
 		GLES20.glDepthFunc( GLES20.GL_LEQUAL );
 		GLES20.glDepthMask( true );
+		
 		// Create our shader program
-		program = new Program("default.vert", "default.frag", context);
-		//program = new Program("phong_vert.glsl", "phong_frag.glsl", context);    
+		//program = new Program("default.vert", "default.frag", context);
+		program = new Program("phong_vert.glsl", "phong_frag.glsl", context);
+		
+		//shirt = OBJFile.createModelFromFile("shirt.obj", context, "vertexCoordinates", "texCoordinates", "normalCoordinates");
 		
 		//bunny = OBJFile.createModelFromFile("bunny.obj", context, "vertexCoordinates", null, null);
-		OBJFile cubeOBJ = new OBJFile("cube.obj", context);
-		Subdivider.Subdivide(cubeOBJ);
-		Subdivider.Subdivide(cubeOBJ);
-		
-		cube = cubeOBJ.genModel("vertexCoordinates", null, null);
-		
-		//cube = OBJFile.createModelFromFile("cube.obj", context, "vertexCoordinates",
-		//		"texCoordinates", "normalCoordinates");
+		cube = OBJFile.createModelFromFile("cube.obj", context, "vertexCoordinates", null, "normalCoordinates");
+				//new OBJFile("cube.obj", context);
+		//Subdivider.Subdivide(cubeOBJ);
+		//cube = cubeOBJ.genModel("vertexCoordinates", null, "normalCoordinates");
 		
 		// Set view properties
 		Matrix.setLookAtM(
@@ -78,5 +78,6 @@ public class MainRenderer implements Renderer {
     private Program program;
     private Model bunny;
     private Model cube;
+    private Model shirt;
 
 }

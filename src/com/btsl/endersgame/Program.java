@@ -130,17 +130,23 @@ public class Program {
         
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture.getID());
-        GLES20.glUniform1i(id, 0);
+        GLES20.glUniform1i(location, 0);
     }
     
     public void setUniform(Material mat) {
     	if (mat == null) return;
     	setUniform("mat.Ns", mat.Ns);
     	setUniform("mat.d", mat.d);
+    	Log.e("Material", "mat.Ka is (" + mat.Kar + ", " + mat.Kag + ", " + mat.Kab + ")");
         setUniform("mat.Ka", mat.Kar, mat.Kag, mat.Kab);
+        Log.e("Material", "mat.Kd is (" + mat.Kdr + ", " + mat.Kdg + ", " + mat.Kdb + ")");
         setUniform("mat.Kd", mat.Kdr, mat.Kdg, mat.Kdb);
+        Log.e("Material", "mat.Ks is (" + mat.Ksr + ", " + mat.Ksg + ", " + mat.Ksb + ")");
         setUniform("mat.Ks", mat.Ksr, mat.Ksg, mat.Ksb);
+        Log.e("Material", "mat.Ka is (" + mat.Kar + ", " + mat.Kag + ", " + mat.Kab + ")");
         setUniform("mat.Ke", mat.Ker, mat.Keg, mat.Keb);
+        if (mat.texture != null)
+        	setUniform("mat.texture", mat.texture);
     }
     
     /* Methods for assigning values for transformation matrices

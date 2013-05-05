@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 public class Material {
@@ -25,12 +27,15 @@ public class Material {
 	/** Specular color */
 	public float Ksr, Ksg, Ksb;
 	
-	/** emissivity */
+	/** Emissivity */
 	public float Ker, Keg, Keb;
+	
+	/** Texture */
+	public Texture texture;
 	
 	public static MTLFile parseMTLFile(String filename, Context context) {
 		try {
-			return new MTLFile(new BufferedReader(new InputStreamReader(context.getAssets().open(filename))));
+			return new MTLFile(new BufferedReader(new InputStreamReader(context.getAssets().open(filename))), context);
 		} catch (IOException e) {
 			Log.e("Material", "could not open the file " + filename);
 		}
@@ -41,7 +46,7 @@ public class Material {
     public static class MTLFile {
         private HashMap<String, Material> map = new HashMap<String, Material>();
         
-        public MTLFile(BufferedReader rd) throws IOException {
+        public MTLFile(BufferedReader rd, Context context) throws IOException {
             String curMatName = "";
             Material m = null;
 
@@ -76,6 +81,10 @@ public class Material {
                     m.Keg = Float.parseFloat(arr[start + 2]);
                     m.Keb = Float.parseFloat(arr[start + 3]);
                     map.put(curMatName, m);
+                } else if (arr[start + 0].equals("map_Ka")) {
+                	Bitmap bitmap = BitmapFactory.decodeFile(arr[start + 1]);
+                	System.out.println("Is bitmap null? " + bitmap);
+                	m.texture = new BitmapTexture(bitmap);
                 }
             }
         }
@@ -94,6 +103,8 @@ public class Material {
 		 * @return
 		 */
 		public Material first() {
+			if (map.isEmpty())
+				return null;
 			return map.values().iterator().next();
 		}
 	}
