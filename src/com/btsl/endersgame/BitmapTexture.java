@@ -11,6 +11,7 @@ public class BitmapTexture extends Texture
 	public BitmapTexture(Bitmap bitmap) {
 		super(bitmap.getWidth(), bitmap.getHeight());
 		this.bitmap = bitmap;
+		bind();
 	}
 	
 	@Override

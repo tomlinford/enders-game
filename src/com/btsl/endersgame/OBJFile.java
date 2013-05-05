@@ -96,11 +96,11 @@ public class OBJFile {
 				if (line.length() < 3 || line.charAt(0) == '#') continue;
 				String[] arr = line.split(" ");
 				if (arr[0].equals("v")) {
-					addFloats(arr, vertCoords);
+					addFloats(arr, vertCoords, 3);
 				} else if (arr[0].equals("vt")) {
-					addFloats(arr, texCoords);
+					addFloats(arr, texCoords, 2);
 				} else if (arr[0].equals("vn")) {
-					addFloats(arr, normalCoords);
+					addFloats(arr, normalCoords, 3);
 				} else if (arr[0].equals("f")) {
 					addFaces(arr, vertexIndices);
 				} else if (arr[0].equals("mtllib")) {
@@ -194,9 +194,12 @@ public class OBJFile {
 	 * @param arr
 	 * @param al
 	 */
-	private static void addFloats(String[] arr, ArrayList<Float> al) {
-		for (int i = 1; i < arr.length; i++)
-			al.add(Float.parseFloat(arr[i]));
+	private static void addFloats(String[] arr, ArrayList<Float> al, int num) {
+		for (int i = 1; i < arr.length; i++) {
+			if (arr[i].isEmpty()) continue;
+				al.add(Float.parseFloat(arr[i]));
+			if (--num == 0) return;
+		}
 	}
 	
 	/**

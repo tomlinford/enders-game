@@ -32,16 +32,20 @@ public class MainRenderer implements Renderer {
         
         // Use our custom shader
         phongProgram.use();
-        
         phongProgram.setUniform("worldspaceCameraPosition", Camera.getPosition()[0],
+        		Camera.getPosition()[1], Camera.getPosition()[2]);
+        texturedPhongProgram.use();
+        texturedPhongProgram.setUniform("worldspaceCameraPosition", Camera.getPosition()[0],
         		Camera.getPosition()[1], Camera.getPosition()[2]);
         
         Matrix.multiplyMM(viewProjection, 0, projection, 0, Camera.getView(), 0);
         
         // bunny.draw(program, GLES20.GL_TRIANGLES, viewProjection, 0);
-        cubes[cubeIndex].draw(program, GLES20.GL_LINE_LOOP, viewProjection, 0);
-        if (flat) flatSphere.draw(phongProgram, GLES20.GL_TRIANGLES, viewProjection, 0);
-        else sphere.draw(phongProgram, GLES20.GL_TRIANGLES, viewProjection, 0);
+//        cubes[cubeIndex].draw(program, GLES20.GL_LINE_LOOP, viewProjection, 0);
+//        if (flat) flatSphere.draw(phongProgram, GLES20.GL_TRIANGLES, viewProjection, 0);
+//        else sphere.draw(phongProgram, GLES20.GL_TRIANGLES, viewProjection, 0);
+//        texturedCube.draw(texturedPhongProgram, GLES20.GL_TRIANGLES, viewProjection, 0);
+        shirt.draw(texturedPhongProgram, GLES20.GL_TRIANGLES, viewProjection, 0);
 	}
 
 	@Override
@@ -58,20 +62,27 @@ public class MainRenderer implements Renderer {
 		GLES20.glDepthMask( true );
 		// Create our shader program
 		program = new Program("default.vert", "default.frag", context);
-		phongProgram = new Program("phong_vert.glsl", "phong_frag.glsl", context);    
+		phongProgram = new Program("phong_vert.glsl", "phong_frag.glsl", context);
+		texturedPhongProgram = new Program("phong_vert.glsl", "textured_phong_frag.glsl", context);
+		
+		shirt = OBJFile.createModelFromFile("shirt.obj", context, "vertexCoordinates",
+				"texCoordinates", "normalCoordinates");
 		
 		//bunny = OBJFile.createModelFromFile("bunny.obj", context, "vertexCoordinates", null, null);
-		OBJFile cubeOBJ = new OBJFile("cube.obj", context);
-		cubes[0] = cubeOBJ.genModel("vertexCoordinates", "texCoordinates", "normalCoordinates");
-		for (int i = 1; i < cubes.length; i++) {
-			Subdivider.Subdivide(cubeOBJ);
-			cubes[i] = cubeOBJ.genModel("vertexCoordinates", "texCoordinates", "normalCoordinates");
-		}
-		
-		flatSphere = OBJFile.createModelFromFile("sphere.obj", context, "vertexCoordinates", null, "normalCoordinates");
-		flatSphere.translate(3, 0, 0);
-		sphere = OBJFile.createModelFromFile("sphere.obj", context, "vertexCoordinates", null, "normalCoordinates", true);
-		sphere.translate(3, 0, 0);
+//		OBJFile cubeOBJ = new OBJFile("cube.obj", context);
+//		cubes[0] = cubeOBJ.genModel("vertexCoordinates", "texCoordinates", "normalCoordinates");
+//		for (int i = 1; i < cubes.length; i++) {
+//			Subdivider.Subdivide(cubeOBJ);
+//			cubes[i] = cubeOBJ.genModel("vertexCoordinates", "texCoordinates", "normalCoordinates");
+//		}
+//		texturedCube = OBJFile.createModelFromFile("textured_cube.obj", context, "vertexCoordinates",
+//				"texCoordinates", "normalCoordinates");
+//		texturedCube.translate(-3, 0, 0);
+//		
+//		flatSphere = OBJFile.createModelFromFile("sphere.obj", context, "vertexCoordinates", null, "normalCoordinates");
+//		flatSphere.translate(3, 0, 0);
+//		sphere = OBJFile.createModelFromFile("sphere.obj", context, "vertexCoordinates", null, "normalCoordinates", true);
+//		sphere.translate(3, 0, 0);
 	}
 	
 	public void subdivideCube() {
@@ -84,11 +95,14 @@ public class MainRenderer implements Renderer {
 
     private Program program;
     private Program phongProgram;
+    private Program texturedPhongProgram;
+    private Model shirt;
 //    private Model bunny;
     private Model sphere;
     private Model flatSphere;
     private boolean flat;
     private Model[] cubes = new Model[6];
+    private Model texturedCube;
     private int cubeIndex;
 
 }

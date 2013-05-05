@@ -3,6 +3,7 @@ package com.btsl.endersgame;
 import java.util.List;
 
 import android.opengl.Matrix;
+import android.util.Log;
 
 public class Model {
 	
@@ -70,6 +71,7 @@ public class Model {
 		program.setMVP(mvp);
 		program.setM(model);
 		program.setUniform(mat);
+//		Log.e("Draw", "Draw was called");
 		modelBuf.draw(program, mode);
 	}
 	

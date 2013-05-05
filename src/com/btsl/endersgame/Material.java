@@ -2,10 +2,13 @@ package com.btsl.endersgame;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 public class Material {
@@ -25,12 +28,15 @@ public class Material {
 	/** Specular color */
 	public float Ksr, Ksg, Ksb;
 	
-	/** emissivity */
+	/** Emissivity */
 	public float Ker, Keg, Keb;
+	
+	/** Texture */
+	public Texture texture;
 	
 	public static MTLFile parseMTLFile(String filename, Context context) {
 		try {
-			return new MTLFile(new BufferedReader(new InputStreamReader(context.getAssets().open(filename))));
+			return new MTLFile(new BufferedReader(new InputStreamReader(context.getAssets().open(filename))), context);
 		} catch (IOException e) {
 			Log.e("Material", "could not open the file " + filename);
 		}
@@ -41,12 +47,13 @@ public class Material {
     public static class MTLFile {
         private HashMap<String, Material> map = new HashMap<String, Material>();
         
-        public MTLFile(BufferedReader rd) throws IOException {
+        public MTLFile(BufferedReader rd, Context context) throws IOException {
             String curMatName = "";
             Material m = null;
 
             for (String line = rd.readLine(); line != null; line = rd.readLine()) {
                 if (line.length() < 3 || line.charAt(0) == '#') continue;
+                line = line.trim();
                 String[] arr = line.split(" ");
 
                 int start = 0;
@@ -76,6 +83,12 @@ public class Material {
                     m.Keg = Float.parseFloat(arr[start + 2]);
                     m.Keb = Float.parseFloat(arr[start + 3]);
                     map.put(curMatName, m);
+                } else if (arr[start + 0].equals("map_Ka")) {
+                	InputStream is = context.getAssets().open(arr[start + 1].trim());
+//                	Bitmap bitmap = BitmapFactory.decodeFile("/assets/" + arr[start + 1]);
+                	Bitmap bitmap = BitmapFactory.decodeStream(is);
+                	System.out.println("Is bitmap null? " + bitmap);
+                	m.texture = new BitmapTexture(bitmap);
                 }
             }
         }
@@ -94,6 +107,8 @@ public class Material {
 		 * @return
 		 */
 		public Material first() {
+			if (map.isEmpty())
+				return null;
 			return map.values().iterator().next();
 		}
 	}
