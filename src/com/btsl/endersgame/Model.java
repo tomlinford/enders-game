@@ -86,6 +86,14 @@ public class Model {
 	}
 	
 	/**
+	 * Sets the location of the Model to the given x, y, z
+	 */
+	public void setLocation(float x, float y, float z) {
+		Matrix.setIdentityM(model, 0);
+		Matrix.translateM(model, 0, x, y, z);
+	}
+	
+	/**
 	 * Scales the Model by the given sx, sy, sz
 	 * @param sx
 	 * @param sy

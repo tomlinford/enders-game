@@ -8,15 +8,23 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.Matrix;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class MainRenderer implements Renderer {
 	
 	/* Need to remember context to get resources. */
 	private final Context context;
 	
 	/* Transformation matrices */
+	private float[] model = new float[16];
 	private float[] projection = new float[16];
 	private float[] view = new float[16];
 	private float[] viewProjection = new float[16];
+	
+	/* Animation path */
+	public List<KeyFrame> keyFrames = Collections.synchronizedList(new ArrayList<KeyFrame>());
 	
 	public MainRenderer(Context context) {
 		this.context = context;
@@ -24,6 +32,15 @@ public class MainRenderer implements Renderer {
 
 	@Override
 	public void onDrawFrame(GL10 unused) {
+		
+		long now = System.currentTimeMillis();
+		ArrayList<KeyFrame> controlFrames = getControlFrames(now);
+		if (controlFrames.size() > 0) {
+			CMSpline spline = new CMSpline(controlFrames.get(0).position, controlFrames.get(1).position, 
+					controlFrames.get(2).position, controlFrames.get(3).position);
+			float[] position = spline.evaluate_vec(now);
+			cubes[cubeIndex].setLocation(position[0], position[1], position[2]);
+		}
 		
 		// Clear frame
 		GLES20.glClearColor(0.1f, 0.1f, .1f, 1.0f);
@@ -34,6 +51,7 @@ public class MainRenderer implements Renderer {
         phongProgram.use();
         phongProgram.setUniform("worldspaceCameraPosition", Camera.getPosition()[0],
         		Camera.getPosition()[1], Camera.getPosition()[2]);
+        
         texturedPhongProgram.use();
         texturedPhongProgram.setUniform("worldspaceCameraPosition", Camera.getPosition()[0],
         		Camera.getPosition()[1], Camera.getPosition()[2]);
@@ -41,11 +59,11 @@ public class MainRenderer implements Renderer {
         Matrix.multiplyMM(viewProjection, 0, projection, 0, Camera.getView(), 0);
         
         // bunny.draw(program, GLES20.GL_TRIANGLES, viewProjection, 0);
-//        cubes[cubeIndex].draw(program, GLES20.GL_LINE_LOOP, viewProjection, 0);
+        cubes[cubeIndex].draw(program, GLES20.GL_LINE_LOOP, viewProjection, 0);
 //        if (flat) flatSphere.draw(phongProgram, GLES20.GL_TRIANGLES, viewProjection, 0);
 //        else sphere.draw(phongProgram, GLES20.GL_TRIANGLES, viewProjection, 0);
 //        texturedCube.draw(texturedPhongProgram, GLES20.GL_TRIANGLES, viewProjection, 0);
-        shirt.draw(texturedPhongProgram, GLES20.GL_TRIANGLES, viewProjection, 0);
+        //shirt.draw(texturedPhongProgram, GLES20.GL_TRIANGLES, viewProjection, 0);
 	}
 
 	@Override
@@ -65,16 +83,16 @@ public class MainRenderer implements Renderer {
 		phongProgram = new Program("phong_vert.glsl", "phong_frag.glsl", context);
 		texturedPhongProgram = new Program("phong_vert.glsl", "textured_phong_frag.glsl", context);
 		
-		shirt = OBJFile.createModelFromFile("shirt.obj", context, "vertexCoordinates",
-				"texCoordinates", "normalCoordinates");
+//		shirt = OBJFile.createModelFromFile("shirt.obj", context, "vertexCoordinates",
+//				"texCoordinates", "normalCoordinates");
 		
 		//bunny = OBJFile.createModelFromFile("bunny.obj", context, "vertexCoordinates", null, null);
-//		OBJFile cubeOBJ = new OBJFile("cube.obj", context);
-//		cubes[0] = cubeOBJ.genModel("vertexCoordinates", "texCoordinates", "normalCoordinates");
-//		for (int i = 1; i < cubes.length; i++) {
-//			Subdivider.Subdivide(cubeOBJ);
-//			cubes[i] = cubeOBJ.genModel("vertexCoordinates", "texCoordinates", "normalCoordinates");
-//		}
+		OBJFile cubeOBJ = new OBJFile("cube.obj", context);
+		cubes[0] = cubeOBJ.genModel("vertexCoordinates", "texCoordinates", "normalCoordinates");
+		for (int i = 1; i < cubes.length; i++) {
+			Subdivider.Subdivide(cubeOBJ);
+			cubes[i] = cubeOBJ.genModel("vertexCoordinates", "texCoordinates", "normalCoordinates");
+		}
 //		texturedCube = OBJFile.createModelFromFile("textured_cube.obj", context, "vertexCoordinates",
 //				"texCoordinates", "normalCoordinates");
 //		texturedCube.translate(-3, 0, 0);
@@ -84,6 +102,30 @@ public class MainRenderer implements Renderer {
 //		sphere = OBJFile.createModelFromFile("sphere.obj", context, "vertexCoordinates", null, "normalCoordinates", true);
 //		sphere.translate(3, 0, 0);
 	}
+	
+	ArrayList<KeyFrame> getControlFrames(long time)
+	{
+	    ArrayList<KeyFrame> controlFrames = new ArrayList<KeyFrame>(4);
+	    if (keyFrames.size() >= 4)
+	    {
+	        int i = 1;
+	        while (i < keyFrames.size() && keyFrames.get(i).time < time)
+	            i++;
+	        
+	        // Exclude edge cases where we don't have enough
+	        // control points
+	        if (i - 2 >= 0 &&
+	            i + 1 < keyFrames.size())
+	        {
+	            controlFrames.add(keyFrames.get(i - 2));
+	            controlFrames.add(keyFrames.get(i - 1));
+	            controlFrames.add(keyFrames.get(i));
+	            controlFrames.add(keyFrames.get(i + 1));
+	        }
+	    }
+	    return controlFrames;
+	}
+
 	
 	public void subdivideCube() {
 		if (cubeIndex < cubes.length - 1) cubeIndex++;
@@ -96,7 +138,7 @@ public class MainRenderer implements Renderer {
     private Program program;
     private Program phongProgram;
     private Program texturedPhongProgram;
-    private Model shirt;
+//    private Model shirt;
 //    private Model bunny;
     private Model sphere;
     private Model flatSphere;

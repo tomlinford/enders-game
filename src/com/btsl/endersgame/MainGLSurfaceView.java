@@ -35,7 +35,7 @@ public class MainGLSurfaceView extends GLSurfaceView {
 		
 		renderer = new MainRenderer(context);
 		setRenderer(renderer);
-		setRenderMode(RENDERMODE_WHEN_DIRTY);
+		setRenderMode(RENDERMODE_CONTINUOUSLY);
 		
 		new Thread(new ClientThread()).start();
 	}
@@ -109,12 +109,24 @@ public class MainGLSurfaceView extends GLSurfaceView {
 //					out.println(bq.take());
 				BufferedReader rd = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				for (String line = rd.readLine(); line != null; line = rd.readLine()) {
-					if (line.trim().equals("subdivide")) {
+					if (line.trim() == "subdivide") {
 						renderer.subdivideCube();
 						requestRender();
-					} else if (line.equals("flat")) {
+					} else if (line == "flat") {
 						renderer.swapFlat();
 						requestRender();
+					} else if (line.substring(0, 8) == "animate") {
+						String[] components = line.split(" ");
+						for (int i = 1; i < components.length; i++) {
+							KeyFrame frame = new KeyFrame();
+							frame.position[0] = Float.parseFloat(components[1]);
+							frame.position[1] = Float.parseFloat(components[2]);
+							frame.position[2] = Float.parseFloat(components[3]);
+							frame.time = System.currentTimeMillis() + i * 1000;
+							synchronized (renderer.keyFrames) {
+								renderer.keyFrames.add(frame);
+							}
+						}
 					}
 				}
 			} catch (Exception e) {

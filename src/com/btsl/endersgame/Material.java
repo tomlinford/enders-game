@@ -85,9 +85,7 @@ public class Material {
                     map.put(curMatName, m);
                 } else if (arr[start + 0].equals("map_Ka")) {
                 	InputStream is = context.getAssets().open(arr[start + 1].trim());
-//                	Bitmap bitmap = BitmapFactory.decodeFile("/assets/" + arr[start + 1]);
                 	Bitmap bitmap = BitmapFactory.decodeStream(is);
-                	System.out.println("Is bitmap null? " + bitmap);
                 	m.texture = new BitmapTexture(bitmap);
                 }
             }
