@@ -19,7 +19,15 @@ public class ElementArrayBuffer extends DataBuffer<Integer> {
 	
 	public void draw(int mode) {
 		bind();
-		GLES20.glDrawElements(mode, size, dataType, 0);
+		if (mode == GLES20.GL_LINE_LOOP) {
+			// Draw wireframe
+	        for (int i = 0; i < size * (Byte.SIZE / 8); i += 3 * (Byte.SIZE / 8)) {
+	            GLES20.glDrawElements(GLES20.GL_LINE_LOOP, 3, GLES20.GL_UNSIGNED_BYTE, i);
+	        }
+		}
+		else {
+			GLES20.glDrawElements(mode, size, dataType, 0);
+		}
 	}
 	
 }

@@ -43,8 +43,8 @@ public class Subdivider {
 	    {
 	        // Create first vertex
 	    	Vertex v1 = AddVertex(vertCoords.get(3 * vertexIndices.get(i)),
-	    						  vertCoords.get(3 * vertexIndices.get(i + 1)),
-	    						  vertCoords.get(3 * vertexIndices.get(i + 2)));
+	    						  vertCoords.get(3 * vertexIndices.get(i) + 1),
+	    						  vertCoords.get(3 * vertexIndices.get(i) + 2));
 	        
 	        // Create second vertex
 	        Vertex v2 = AddVertex(vertCoords.get(3 * vertexIndices.get(i + 1)),
@@ -62,6 +62,7 @@ public class Subdivider {
 	    }
 	    
 	    // Calculate face's neighbors recursively
+	    System.out.println("Faces found: " + faces.size());
 	    if (faces.size() > 0)
 	        FindNeighbors(faces);
 	}
@@ -75,10 +76,7 @@ public class Subdivider {
 	private static void DivideFaces() {
 		// Add new faces
 	    ArrayList<Face> subdividedFaces = new ArrayList<Face>();
-	    for (int i = 0; i < faces.size(); i++)
-	    {
-	        Face face = faces.get(i);
-	        
+	    for (Face face : faces) {
 	        // Add new (odd) vertices at midpoints along face's edges
 	        Vertex v1_v2 = AddVertex(face.v1, face.v2);
 	        Vertex v2_v3 = AddVertex(face.v2, face.v3);
@@ -88,36 +86,23 @@ public class Subdivider {
 	        if (v1_v2.equals(v2_v3) || v2_v3.equals(v3_v1) || v1_v2.equals(v3_v1))
 	            continue;
 	        
-	        // Indicate these are new (odd) vertices
-	        v1_v2.index = -2;
-	        v2_v3.index = -2;
-	        v3_v1.index = -2;
-	        
 	        // Displace new (odd) vertices
-	        DisplaceOddVertex(v1_v2, face.v1, face.v2, face.v3, face.n1);
-	        DisplaceOddVertex(v2_v3, face.v2, face.v3, face.v1, face.n2);
-	        DisplaceOddVertex(v3_v1, face.v3, face.v1, face.v2, face.n3);
+	        //DisplaceOddVertex(v1_v2, face.v1, face.v2, face.v3, face.n1);
+	        //DisplaceOddVertex(v2_v3, face.v2, face.v3, face.v1, face.n2);
+	        //DisplaceOddVertex(v3_v1, face.v3, face.v1, face.v2, face.n3);
 	        
 	        // Generate new faces
-	        Face face1 = new Face(v1_v2, v2_v3, v3_v1);
-	        Face face2 = new Face(face.v1, v1_v2, v3_v1);
-	        Face face3 = new Face(v1_v2, face.v2, v2_v3);
-	        Face face4 = new Face(v3_v1, v2_v3, face.v3);
-	        
-	        {
-	            subdividedFaces.add(face1);
-	            subdividedFaces.add(face2);
-	            subdividedFaces.add(face3);
-	            subdividedFaces.add(face4);
-	        }
+            subdividedFaces.add(new Face(v1_v2, v2_v3, v3_v1));
+            subdividedFaces.add(new Face(face.v1, v1_v2, v3_v1));
+            subdividedFaces.add(new Face(v1_v2, face.v2, v2_v3));
+            subdividedFaces.add(new Face(v3_v1, v2_v3, face.v3));
 	    }
 	    
-	    // Delete old faces for vertices
-	    for (int i = 0; i < faces.size(); i++)
-	    {
-	        Face face = faces.get(i);
-	        
-	        // Remove this face from its vertices
+	    // Delete old faces from vertices. This must be done
+	    // as a separate pass from the above loop because
+	    // odd vertex displacement traverses the old face
+	    // structure to find reference vertices
+	    for (Face face : faces) {
 	        RemoveFace(face.v1, face);
 	        RemoveFace(face.v2, face);
 	        RemoveFace(face.v3, face);
@@ -127,15 +112,12 @@ public class Subdivider {
 	    FindNeighbors(subdividedFaces);
 	    
 	    // Displace even vertices
-	    int count = 0;
-	    for (Vertex vertex : vertices.values()) {
-	        if (vertex.index == -2)
-	            continue;
-	        
-	        DisplaceEvenVertex(vertex);
-	        count++;
-	    }
+	    /*for (Vertex vertex : vertices.values()) {
+	        if (vertex.index != -2)
+	        	DisplaceEvenVertex(vertex);
+	    }*/
 	    
+	    // Swap face information
 	    faces = subdividedFaces;
 	}
 	
@@ -161,6 +143,7 @@ public class Subdivider {
 	    
 	    // Push vertex indices (faces) to buffer
 	    for (Face face : faces) {
+	    	System.out.println(face);
 	    	model_faces.add(face.v1.index);
 	    	model_faces.add(face.v2.index);
 	    	model_faces.add(face.v3.index);
@@ -262,7 +245,8 @@ public class Subdivider {
 	    
 	    // Calculate weight
 	    float n = vertices.size();
-	    float beta;
+	    @SuppressWarnings("unused")
+		float beta;
 	    if (n == 3)
 	        beta = 3.0f / 16.0f;
 	    else
@@ -297,9 +281,11 @@ public class Subdivider {
 	 * @param v2
 	 */
 	private static Vertex AddVertex(Vertex v1, Vertex v2) {
-		return AddVertex((v1.position.x + v2.position.x) / 2,
-						 (v1.position.y + v2.position.y) / 2,
-						 (v1.position.z + v2.position.z) / 2);
+		Vertex v = AddVertex((v1.position.x + v2.position.x) / 2,
+						 	 (v1.position.y + v2.position.y) / 2,
+						 	 (v1.position.z + v2.position.z) / 2);
+		v.index = -2;
+		return v;
 	}
 	
 	/**
@@ -360,26 +346,40 @@ public class Subdivider {
 	        // If the face contains both v1 and v2,
 	        // it's our neighbor and we're it's neighbor
 	        n = other;
-	        if (other.v1 == v2)
+	        if (other.v1 == v2) {
 	            other.n1 = face;
-	        else if (other.v2 == v2)
+	            // Assign neighbor as appropriate
+	    	    if (neighbor == 1)
+	    	    	face.n1 = n;
+	    	    else if (neighbor == 2)
+	    	    	face.n2 = n;
+	    	    else if (neighbor == 3)
+	    	    	face.n3 = n;
+	    	    return;
+	        }
+	        else if (other.v2 == v2) {
 	            other.n2 = face;
-	        else if (other.v3 == v2)
+	            // Assign neighbor as appropriate
+	    	    if (neighbor == 1)
+	    	    	face.n1 = n;
+	    	    else if (neighbor == 2)
+	    	    	face.n2 = n;
+	    	    else if (neighbor == 3)
+	    	    	face.n3 = n;
+	    	    return;
+	        }
+	        else if (other.v3 == v2) {
 	            other.n3 = face;
-	        break;
+	         // Assign neighbor as appropriate
+	    	    if (neighbor == 1)
+	    	    	face.n1 = n;
+	    	    else if (neighbor == 2)
+	    	    	face.n2 = n;
+	    	    else if (neighbor == 3)
+	    	    	face.n3 = n;
+	    	    return;
+	        }
 	    }
-	    
-	    // Neighbor not found
-	    if (n == null)
-	    	return;
-	    
-	    // Assign neighbor as appropriate
-	    if (neighbor == 1)
-	    	face.n1 = n;
-	    else if (neighbor == 2)
-	    	face.n2 = n;
-	    else if (neighbor == 3)
-	    	face.n3 = n;
 	}
 	
 	/**
@@ -437,6 +437,13 @@ public class Subdivider {
 			return false;
 		}
 		
+		public String toString() {
+			String str = "Face at (" + v1.position.x + ", " + v1.position.y + ", " + v1.position.z + ") " +
+						 "(" + v2.position.x + ", " + v2.position.y + ", " + v2.position.z + ") " +
+						 "(" + v3.position.x + ", " + v3.position.y + ", " + v3.position.z + ") "; 
+			return str;
+		}
+		
 	}
 	
 	/**
@@ -445,7 +452,7 @@ public class Subdivider {
 	 * @author bhnascar
 	 *
 	 */
-	private static class Vertex implements Comparable {
+	private static class Vertex implements Comparable<Object> {
 		
 		public int index;
 		public Position position; 	  // Position
@@ -459,6 +466,7 @@ public class Subdivider {
 		/**
 		 * Compares two vertices by position.
 		 */
+		@Override
 		public int compareTo(Object other) {
 			if (other instanceof Vertex) {
 				Vertex v = (Vertex)other;
@@ -470,6 +478,7 @@ public class Subdivider {
 		/**
 		 * Compares two vertices by position.
 		 */
+		@Override
 		public boolean equals(Object other) {
 			if (other instanceof Vertex) {
 				Vertex v = (Vertex)other;
@@ -487,7 +496,7 @@ public class Subdivider {
 	 * @author bhnascar
 	 *
 	 */
-	private static class Position implements Comparable {
+	private static class Position implements Comparable<Object> {
 		
 		public float x, y, z;
 		
@@ -498,8 +507,22 @@ public class Subdivider {
 		}
 		
 		/**
+		 * Eclipse-generated, lets us use a HashMap
+		 */
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + discretize(x);
+			result = prime * result + discretize(y);
+			result = prime * result + discretize(z);
+			return result;
+		}
+		
+		/**
 		 * Compares two positions by x,y,z values.
 		 */
+		@Override
 		public int compareTo(Object other) {
 			if (other instanceof Position) {
 				Position p = (Position)other;
@@ -520,6 +543,7 @@ public class Subdivider {
 		/**
 		 * Compares two positions by x,y,z values.
 		 */
+		@Override
 		public boolean equals(Object other) {
 			if (other instanceof Position) {
 				Position p = (Position)other;

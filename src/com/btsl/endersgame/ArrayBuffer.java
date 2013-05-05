@@ -53,8 +53,8 @@ public class ArrayBuffer<T> extends DataBuffer<T> {
 		unbind();
 	}
 	
-	private int getLoc(Program p) {
-		return p.getAttribLocation(attribute);
+	private int getLoc(Program program) {
+		return program.getAttribLocation(attribute);
 	}
 	
 }

@@ -89,12 +89,12 @@ public class OBJFile {
 		// keep track of used indices to allow reuse
 		HashMap<VertexIndex, Integer> indexMap = new HashMap<VertexIndex, Integer>();
 		
+		int count = 0;
 		for (VertexIndex vi : vertexIndices) {
-			if (indexMap.containsKey(vi)) {
-				indices.add(indexMap.get(vi));
-			} else {
-				indexMap.put(vi, this.vertCoords.size() / 3);
-				indices.add(this.vertCoords.size() / 3);
+			Integer index = indexMap.get(vi);
+			if (index == null) {
+				index = count++;
+				indexMap.put(vi, index);
 				for (int i = 0; i < 3; i++)
 					this.vertCoords.add(vertCoords.get(vi.v * 3 + i) / max);
 				if (!texCoords.isEmpty())
@@ -104,6 +104,7 @@ public class OBJFile {
 					for (int i = 0; i < 3; i++)
 						this.normals.add(normalCoords.get(vi.n * 3 + i));
 			}
+			indices.add(index);
 		}
 		if (mtlFile != null) mat = mtlFile.first();
 	}
@@ -143,7 +144,7 @@ public class OBJFile {
 	}
 	
 	/**
-	 * adds the VertexIndex from arr into starting at arr[1]
+	 * adds the VertexIndex from arr into al starting at arr[1]
 	 * @param arr
 	 * @param al
 	 */
@@ -202,10 +203,6 @@ public class OBJFile {
 				return false;
 			return true;
 		}
-	}
-	
-	private static void parseMaterialFile(String filename) {
-		
 	}
 
 }

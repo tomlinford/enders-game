@@ -24,13 +24,17 @@ public class MainGLSurfaceView extends GLSurfaceView {
 
 	public MainGLSurfaceView(Context context) {
 		super(context);
+		
 		Camera.init();
+		
 		setEGLContextClientVersion(2);
 		setEGLConfigChooser(8, 8, 8, 8, 16, 0);
 		setDebugFlags(DEBUG_CHECK_GL_ERROR);
+		
 		renderer = new MainRenderer(context);
 		setRenderer(renderer);
 		setRenderMode(RENDERMODE_WHEN_DIRTY);
+		
 		new Thread(new ClientThread()).start();
 	}
 	
