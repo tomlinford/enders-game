@@ -87,9 +87,9 @@ public class Subdivider {
 	            continue;
 	        
 	        // Displace new (odd) vertices
-	        //DisplaceOddVertex(v1_v2, face.v1, face.v2, face.v3, face.n1);
-	        //DisplaceOddVertex(v2_v3, face.v2, face.v3, face.v1, face.n2);
-	        //DisplaceOddVertex(v3_v1, face.v3, face.v1, face.v2, face.n3);
+	        DisplaceOddVertex(v1_v2, face.v1, face.v2, face.v3, face.n1);
+	        DisplaceOddVertex(v2_v3, face.v2, face.v3, face.v1, face.n2);
+	        DisplaceOddVertex(v3_v1, face.v3, face.v1, face.v2, face.n3);
 	        
 	        // Generate new faces
             subdividedFaces.add(new Face(v1_v2, v2_v3, v3_v1));
@@ -112,10 +112,10 @@ public class Subdivider {
 	    FindNeighbors(subdividedFaces);
 	    
 	    // Displace even vertices
-	    /*for (Vertex vertex : vertices.values()) {
+	    for (Vertex vertex : vertices.values()) {
 	        if (vertex.index != -2)
 	        	DisplaceEvenVertex(vertex);
-	    }*/
+	    }
 	    
 	    // Swap face information
 	    faces = subdividedFaces;
@@ -188,10 +188,10 @@ public class Subdivider {
 	    // Found neighbors, calculate v's new x, y, z using mask:
 	    float x = (3.0f / 8.0f) * v_left.position.x + (3.0f / 8.0f) * v_right.position.x +
 	    		  (1.0f / 8.0f) * v_opposite.position.x;
-	    float y = (3.0f / 8.0f) * v_left.position.x + (3.0f / 8.0f) * v_right.position.x +
-		    	  (1.0f / 8.0f) * v_opposite.position.x;
-	    float z = (3.0f / 8.0f) * v_left.position.x + (3.0f / 8.0f) * v_right.position.x +
-		    	  (1.0f / 8.0f) * v_opposite.position.x;
+	    float y = (3.0f / 8.0f) * v_left.position.y + (3.0f / 8.0f) * v_right.position.y +
+		    	  (1.0f / 8.0f) * v_opposite.position.y;
+	    float z = (3.0f / 8.0f) * v_left.position.z + (3.0f / 8.0f) * v_right.position.z +
+		    	  (1.0f / 8.0f) * v_opposite.position.z;
 	    
 	    if (neighbor.v1 != v_left && neighbor.v1 != v_right) {
 	        x += (1.0f / 8.0f) * neighbor.v1.position.x;

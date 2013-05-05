@@ -58,12 +58,11 @@ public class MainRenderer implements Renderer {
 		//program = new Program("phong_vert.glsl", "phong_frag.glsl", context);    
 		
 		//bunny = OBJFile.createModelFromFile("bunny.obj", context, "vertexCoordinates", null, null);
-		//OBJFile cubeOBJ = new OBJFile("cube.obj", context);
-		OBJFile squareOBJ = new OBJFile("square.obj", context);
-		Subdivider.Subdivide(squareOBJ);
-		Subdivider.Subdivide(squareOBJ);
+		OBJFile cubeOBJ = new OBJFile("cube.obj", context);
+		Subdivider.Subdivide(cubeOBJ);
+		Subdivider.Subdivide(cubeOBJ);
 		
-		cube = squareOBJ.genModel("vertexCoordinates", null, null);
+		cube = cubeOBJ.genModel("vertexCoordinates", null, null);
 		
 		//cube = OBJFile.createModelFromFile("cube.obj", context, "vertexCoordinates",
 		//		"texCoordinates", "normalCoordinates");
