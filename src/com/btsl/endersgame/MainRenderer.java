@@ -41,11 +41,11 @@ public class MainRenderer implements Renderer {
         Matrix.multiplyMM(viewProjection, 0, projection, 0, Camera.getView(), 0);
         
         // bunny.draw(program, GLES20.GL_TRIANGLES, viewProjection, 0);
-//        cubes[cubeIndex].draw(program, GLES20.GL_LINE_LOOP, viewProjection, 0);
+        cubes[cubeIndex].draw(program, GLES20.GL_LINE_LOOP, viewProjection, 0);
 //        if (flat) flatSphere.draw(phongProgram, GLES20.GL_TRIANGLES, viewProjection, 0);
 //        else sphere.draw(phongProgram, GLES20.GL_TRIANGLES, viewProjection, 0);
 //        texturedCube.draw(texturedPhongProgram, GLES20.GL_TRIANGLES, viewProjection, 0);
-        shirt.draw(texturedPhongProgram, GLES20.GL_TRIANGLES, viewProjection, 0);
+//        shirt.draw(texturedPhongProgram, GLES20.GL_TRIANGLES, viewProjection, 0);
 	}
 
 	@Override
@@ -65,16 +65,16 @@ public class MainRenderer implements Renderer {
 		phongProgram = new Program("phong_vert.glsl", "phong_frag.glsl", context);
 		texturedPhongProgram = new Program("phong_vert.glsl", "textured_phong_frag.glsl", context);
 		
-		shirt = OBJFile.createModelFromFile("shirt.obj", context, "vertexCoordinates",
-				"texCoordinates", "normalCoordinates");
+//		shirt = OBJFile.createModelFromFile("shirt.obj", context, "vertexCoordinates",
+//				"texCoordinates", "normalCoordinates");
 		
 		//bunny = OBJFile.createModelFromFile("bunny.obj", context, "vertexCoordinates", null, null);
-//		OBJFile cubeOBJ = new OBJFile("cube.obj", context);
-//		cubes[0] = cubeOBJ.genModel("vertexCoordinates", "texCoordinates", "normalCoordinates");
-//		for (int i = 1; i < cubes.length; i++) {
-//			Subdivider.Subdivide(cubeOBJ);
-//			cubes[i] = cubeOBJ.genModel("vertexCoordinates", "texCoordinates", "normalCoordinates");
-//		}
+		OBJFile cubeOBJ = new OBJFile("cube.obj", context);
+		cubes[0] = cubeOBJ.genModel("vertexCoordinates", "texCoordinates", "normalCoordinates");
+		for (int i = 1; i < cubes.length; i++) {
+			Subdivider.Subdivide(cubeOBJ);
+			cubes[i] = cubeOBJ.genModel("vertexCoordinates", "texCoordinates", "normalCoordinates");
+		}
 //		texturedCube = OBJFile.createModelFromFile("textured_cube.obj", context, "vertexCoordinates",
 //				"texCoordinates", "normalCoordinates");
 //		texturedCube.translate(-3, 0, 0);
