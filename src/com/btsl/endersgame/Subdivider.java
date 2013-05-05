@@ -143,7 +143,7 @@ public class Subdivider {
 	    
 	    // Push vertex indices (faces) to buffer
 	    for (Face face : faces) {
-	    	System.out.println(face);
+//	    	System.out.println(face);
 	    	model_faces.add(face.v1.index);
 	    	model_faces.add(face.v2.index);
 	    	model_faces.add(face.v3.index);

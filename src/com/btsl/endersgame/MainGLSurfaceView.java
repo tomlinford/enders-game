@@ -1,6 +1,8 @@
 package com.btsl.endersgame;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
@@ -102,20 +104,38 @@ public class MainGLSurfaceView extends GLSurfaceView {
 				// specify port when creating the socket
 				socket = new Socket(serverAddr, 1338);
 				// the OutputStreamWriter can be wrapped with a BufferedWriter (and probably should be)
-				PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
-				while (true)
-					out.println(bq.take());
+//				PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
+//				while (true)
+//					out.println(bq.take());
+				BufferedReader rd = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				for (String line = rd.readLine(); line != null; line = rd.readLine()) {
+					if (line.trim().equals("subdivide")) {
+						renderer.subdivideCube();
+						requestRender();
+					} else if (line.equals("flat")) {
+						renderer.swapFlat();
+						requestRender();
+					}
+				}
 			} catch (Exception e) {
 				Log.e("ClientActivity", e.toString());
 				
 				// there's probably a better way to do this..
 				try {
-					if (socket != null) socket.close();
+					if (socket != null) {
+						socket.close();
+						socket = null;
+					}
 				} catch (IOException e1) { }
 				for (;;)
 					try {
 						bq.take();
 					} catch (InterruptedException e1) {}
+			} finally {
+				if (socket != null)
+					try {
+						socket.close();
+					} catch (IOException e) {}
 			}
 		}
 	}

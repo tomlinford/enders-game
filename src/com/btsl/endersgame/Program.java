@@ -135,6 +135,7 @@ public class Program {
     
     public void setUniform(Material mat) {
     	if (mat == null) return;
+    	if (GLES20.glGetUniformLocation(id, "mat.Ns") < 0) return;
     	setUniform("mat.Ns", mat.Ns);
     	setUniform("mat.d", mat.d);
         setUniform("mat.Ka", mat.Kar, mat.Kag, mat.Kab);

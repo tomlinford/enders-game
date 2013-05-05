@@ -1,3 +1,5 @@
+precision mediump float;
+
 /*
 struct Material {
     float Ns;   // specular component

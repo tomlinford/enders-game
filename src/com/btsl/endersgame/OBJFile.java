@@ -48,11 +48,40 @@ public class OBJFile {
 	}
 	
 	/**
+	 * Create a ModelBuffer from a file, also must signify what the attribute names
+	 * will be
+	 * @param filename
+	 * @param context
+	 * @param vAttrib
+	 * @param tAttrib
+	 * @param nAttrib
+	 * @param averageNormals averageNormals set to be true to average the normals for phong shading
+	 * 	as opposed to flat shading
+	 * @return
+	 */
+	public static Model createModelFromFile(String filename, Context context,
+			String vAttrib, String tAttrib, String nAttrib, boolean averageNormals) {
+		OBJFile objFile = new OBJFile(filename, context, averageNormals);
+		return objFile.genModel(vAttrib, tAttrib, nAttrib);
+	}
+	
+	/**
 	 * Generate OBJFile from given parameters
 	 * @param filename
 	 * @param context
 	 */
 	public OBJFile(String filename, Context context) {
+		this(filename, context, false);
+	}
+	
+	/**
+	 * Generate OBJFile from given parameters
+	 * @param filename
+	 * @param context
+	 * @param averageNormals set to be true to average the normals for phong shading
+	 * 	as opposed to flat shading
+	 */
+	public OBJFile(String filename, Context context, boolean averageNormals) {
 		ArrayList<Float> vertCoords = new ArrayList<Float>();
 		ArrayList<Float> texCoords = new ArrayList<Float>();
 		ArrayList<Float> normalCoords = new ArrayList<Float>();
@@ -85,6 +114,33 @@ public class OBJFile {
 		// find the maximum float value, so we can normalize it
 		float max = 0f;
 		for (float v : vertCoords) if (max < v) max = v;
+		
+		// average the normals if necessary
+		if (averageNormals) {
+			HashMap<Integer, ArrayList<Integer>> normalIndices = new HashMap<Integer, ArrayList<Integer>>();
+			for (VertexIndex vi : vertexIndices) {
+				if (!normalIndices.containsKey(vi.v)) normalIndices.put(vi.v, new ArrayList<Integer>());
+				normalIndices.get(vi.v).add(vi.n);
+			}
+			for (Integer indexKey : normalIndices.keySet()) {
+				ArrayList<Integer> indices = normalIndices.get(indexKey);
+				float ax = 0, ay = 0, az = 0;
+				for (int index : indices) {
+					ax += normalCoords.get(index * 3);
+					ay += normalCoords.get(index * 3 + 1);
+					az += normalCoords.get(index * 3 + 2);
+				}
+				ax /= indices.size();
+				ay /= indices.size();
+				az /= indices.size();
+				for (VertexIndex vi : vertexIndices) {
+					if (vi.v == indexKey) vi.n = normalCoords.size() / 3;
+				}
+				normalCoords.add(ax);
+				normalCoords.add(ay);
+				normalCoords.add(az);
+			}
+		}
 		
 		// keep track of used indices to allow reuse
 		HashMap<VertexIndex, Integer> indexMap = new HashMap<VertexIndex, Integer>();

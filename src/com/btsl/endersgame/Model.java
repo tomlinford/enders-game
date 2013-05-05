@@ -66,10 +66,39 @@ public class Model {
 	 * */
 	public void draw(Program program, int mode, float[] viewProjection, int offset) {
 		Matrix.multiplyMM(mvp, 0, viewProjection, offset, model, 0);
+		program.use();
 		program.setMVP(mvp);
 		program.setM(model);
 		program.setUniform(mat);
 		modelBuf.draw(program, mode);
+	}
+	
+	/**
+	 * Translates the Model by the given x, y, z
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
+	public void translate(float x, float y, float z) {
+		Matrix.translateM(model, 0, x, y, z);
+	}
+	
+	/**
+	 * Scales the Model by the given sx, sy, sz
+	 * @param sx
+	 * @param sy
+	 * @param sz
+	 */
+	public void scale(float sx, float sy, float sz) {
+		Matrix.scaleM(model, 0, sx, sy, sz);
+	}
+	
+	/**
+	 * Scales the model by the given factor s
+	 * @param s
+	 */
+	public void scale(float s) {
+		Matrix.scaleM(model, 0, s, s, s);
 	}
 	
 	

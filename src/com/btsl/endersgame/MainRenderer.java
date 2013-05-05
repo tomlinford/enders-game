@@ -31,14 +31,17 @@ public class MainRenderer implements Renderer {
         GLES20.glClear( GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
         
         // Use our custom shader
-        program.use();
-        program.setUniform("worldspaceCameraPosition", Camera.getPosition()[0],
+        phongProgram.use();
+        
+        phongProgram.setUniform("worldspaceCameraPosition", Camera.getPosition()[0],
         		Camera.getPosition()[1], Camera.getPosition()[2]);
         
         Matrix.multiplyMM(viewProjection, 0, projection, 0, Camera.getView(), 0);
         
         // bunny.draw(program, GLES20.GL_TRIANGLES, viewProjection, 0);
-        cube.draw(program, GLES20.GL_LINE_LOOP, viewProjection, 0);
+        cubes[cubeIndex].draw(program, GLES20.GL_LINE_LOOP, viewProjection, 0);
+        if (flat) flatSphere.draw(phongProgram, GLES20.GL_TRIANGLES, viewProjection, 0);
+        else sphere.draw(phongProgram, GLES20.GL_TRIANGLES, viewProjection, 0);
 	}
 
 	@Override
@@ -55,28 +58,37 @@ public class MainRenderer implements Renderer {
 		GLES20.glDepthMask( true );
 		// Create our shader program
 		program = new Program("default.vert", "default.frag", context);
-		//program = new Program("phong_vert.glsl", "phong_frag.glsl", context);    
+		phongProgram = new Program("phong_vert.glsl", "phong_frag.glsl", context);    
 		
 		//bunny = OBJFile.createModelFromFile("bunny.obj", context, "vertexCoordinates", null, null);
 		OBJFile cubeOBJ = new OBJFile("cube.obj", context);
-		Subdivider.Subdivide(cubeOBJ);
-		Subdivider.Subdivide(cubeOBJ);
+		cubes[0] = cubeOBJ.genModel("vertexCoordinates", "texCoordinates", "normalCoordinates");
+		for (int i = 1; i < cubes.length; i++) {
+			Subdivider.Subdivide(cubeOBJ);
+			cubes[i] = cubeOBJ.genModel("vertexCoordinates", "texCoordinates", "normalCoordinates");
+		}
 		
-		cube = cubeOBJ.genModel("vertexCoordinates", null, null);
-		
-		//cube = OBJFile.createModelFromFile("cube.obj", context, "vertexCoordinates",
-		//		"texCoordinates", "normalCoordinates");
-		
-		// Set view properties
-		Matrix.setLookAtM(
-			view, 0,
-			0.0f, 0.0f, -5.0f, 	// Eye position
-			0.0f, 0.0f, 0.0f,   // Eye target
-			0.0f, 1.0f, 0.0f);  // Up vector
+		flatSphere = OBJFile.createModelFromFile("sphere.obj", context, "vertexCoordinates", null, "normalCoordinates");
+		flatSphere.translate(3, 0, 0);
+		sphere = OBJFile.createModelFromFile("sphere.obj", context, "vertexCoordinates", null, "normalCoordinates", true);
+		sphere.translate(3, 0, 0);
+	}
+	
+	public void subdivideCube() {
+		if (cubeIndex < cubes.length - 1) cubeIndex++;
+	}
+	
+	public void swapFlat() {
+		flat = !flat;
 	}
 
     private Program program;
-    private Model bunny;
-    private Model cube;
+    private Program phongProgram;
+//    private Model bunny;
+    private Model sphere;
+    private Model flatSphere;
+    private boolean flat;
+    private Model[] cubes = new Model[6];
+    private int cubeIndex;
 
 }
