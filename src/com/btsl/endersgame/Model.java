@@ -19,6 +19,12 @@ public class Model {
 	/** Static matrix for holding temporary mvp value */
 	static float[] mvp = new float[16];
 	
+	/** Static matrix for holding temporary rotation matrix */
+	static float[] rot = new float[16];
+	
+	/** Temporary matrix for computations */
+	static float[] temp = new float[16];
+	
 	/**
 	 * Create Component with everything specified.
 	 * <br>
@@ -121,6 +127,17 @@ public class Model {
 	 */
 	public void rotate(float a, float x, float y, float z) {
 		Matrix.rotateM(model, 0, a, x, y, z);
+	}
+	
+	/**
+	 * Rotates a model based on quaternion
+	 * @param q
+	 * @param qOffset
+	 */
+	public void rotate(float[] q, int qOffset) {
+		Quat.setMatrixFromQuat(rot, 0, q, qOffset);
+		System.arraycopy(model, 0, temp, 0, 16);
+		Matrix.multiplyMM(model, 0, temp, 0, rot, 0);
 	}
 	
 	

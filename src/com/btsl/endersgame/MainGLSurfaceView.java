@@ -7,6 +7,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Random;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
@@ -108,6 +109,7 @@ public class MainGLSurfaceView extends GLSurfaceView {
 //				while (true)
 //					out.println(bq.take());
 				BufferedReader rd = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				Random rgen = new Random();
 				for (String line = rd.readLine(); line != null; line = rd.readLine()) {
 					if (line.trim().equals("subdivide")) {
 						renderer.subdivideCube();
@@ -125,9 +127,12 @@ public class MainGLSurfaceView extends GLSurfaceView {
 							frame.position[1] = Float.parseFloat(components[i + 1]);
 							frame.position[2] = Float.parseFloat(components[i + 2]);
 							frame.time = now  + (i/3 - 2) * 1000;
-							//synchronized (renderer.keyFrames) {
-								renderer.keyFrames.add(frame);
-							//}
+							frame.orientation[0] = 1.f;
+							for (int j = 1; j < 4; j++) {
+								frame.orientation[j] = (float) rgen.nextInt(100) / 100.f;
+							}
+							Quat.normalizeQ(frame.orientation, 0);
+							renderer.keyFrames.add(frame);
 						}
 					} else if (line.equals("spotlight")) {
 						renderer.swapRadius();

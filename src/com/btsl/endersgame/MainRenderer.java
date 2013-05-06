@@ -43,6 +43,8 @@ public class MainRenderer implements Renderer {
 			float u = (float)(now - controlFrames.get(1).time) / (controlFrames.get(2).time - controlFrames.get(1).time);
 			float[] position = spline.evaluate_vec(u);
 			cubes[cubeIndex].setLocation(position[0], position[1], position[2]);
+			float[] q = spline.evaluate_quat(controlFrames.get(1).orientation, 0, controlFrames.get(2).orientation, 0, u);
+			cubes[cubeIndex].rotate(q, 0);
 		}
 		
 		// Clear frame

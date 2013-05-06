@@ -86,4 +86,31 @@ public class CMSpline {
 		return interp;
 	}
 	
+	/**
+	 * Evaluates the rotation
+	 * @param q1
+	 * @param q1Offset
+	 * @param q2
+	 * @param q2Offset
+	 * @param u
+	 * @return
+	 */
+	public float[] evaluate_quat(float[] q1, int q1Offset, float[] q2, int q2Offset, float u) {
+		float[] q = new float[4];
+		
+		float[] nq1 = new float[4];
+		float[] nq2 = new float[4];
+		Quat.setFromQuatQ(nq1, 0, q1, q1Offset);
+		Quat.setFromQuatQ(nq2, 0, q2, q1Offset);
+		
+		Quat.normalizeQ(nq1, q1Offset);
+		Quat.normalizeQ(nq2, q2Offset);
+		float dotted = Quat.dotQ(nq1, 0, nq2, 0);
+		float alpha = (float) Math.acos(dotted);
+		
+		Quat.slerp(q, 0, q1, q1Offset, q2, q2Offset, u, alpha);
+		Quat.normalizeQ(q, 0);
+		return q;
+	}
+	
 }

@@ -3,6 +3,8 @@
  */
 package com.btsl.endersgame;
 
+import android.opengl.Matrix;
+
 /**
  * @author Tom
  *
@@ -102,7 +104,8 @@ public class Quat {
 	public static float dotQ(float[] q1, int offset1, float[] q2, int offset2) {
 		return q1[offset1] * q2[offset2] +
 				q1[offset1 + 1] * q2[offset2 + 1] +
-				q1[offset1 + 2] * q2[offset2 + 2];
+				q1[offset1 + 2] * q2[offset2 + 2] +
+				q1[offset1 + 3] * q2[offset2 + 3];
 	}
 	
 	/**
@@ -224,6 +227,26 @@ public class Quat {
 		setFromQuatQ(slerpExtras, 0, q2, q2Offset);
 		scaleQ(slerpExtras, 0, c2);
 		addQ(res, resOffset, slerpExtras, 0);
+	}
+	
+	/**
+	 * Create a matrix from result and store it in result
+	 * @param result
+	 * @param resOffset
+	 * @param q
+	 * @param qOffset
+	 */
+	public static void setMatrixFromQuat(float[] result, int resOffset, float[] q, int qOffset) {
+		Matrix.setIdentityM(result, resOffset);
+	    result[resOffset] = 1 - 2*q[2 + qOffset]*q[2 + qOffset] - 2*q[3 + qOffset]*q[3 + qOffset];
+	    result[1 + resOffset] = 2*q[1 + qOffset]*q[2 + qOffset] + 2*q[qOffset]*q[3 + qOffset];
+	    result[2 + resOffset] = 2*q[1 + qOffset]*q[3 + qOffset] - 2*q[qOffset]*q[2 + qOffset];
+	    result[4 + resOffset] = 2*q[1 + qOffset]*q[2 + qOffset] - 2*q[qOffset]*q[3 + qOffset];
+	    result[5 + resOffset] = 1 - 2*q[1 + qOffset]*q[1 + qOffset] - 2*q[3 + qOffset]*q[3 + qOffset];
+	    result[6 + resOffset] = 2*q[2 + qOffset]*q[3 + qOffset] + 2*q[qOffset]*q[1 + qOffset];
+	    result[8 + resOffset] = 2*q[1 + qOffset]*q[3 + qOffset] + 2*q[qOffset]*q[2 + qOffset];
+	    result[9 + resOffset] = 2*q[2 + qOffset]*q[3 + qOffset] - 2*q[qOffset]*q[1 + qOffset];
+	    result[10 + resOffset] = 1 - 2*q[1 + qOffset]*q[1 + qOffset] - 2*q[2 + qOffset]*q[2 + qOffset];
 	}
 
 }
