@@ -38,7 +38,7 @@ void main() {
     vec3 materialDiff = mat.Kd;
     vec3 materialSpec = mat.Ks;
     float shininess = mat.Ns;
-    lightSource = vec3(5, 0, 5);
+    lightSource = vec3(8, .75, -.75);
     lightColor = vec3(1.0, 1.0, 1.0);
     float dist = distance(lightSource, worldspacePosition) +
                  distance(worldspacePosition, worldspaceCameraPosition);
@@ -48,11 +48,20 @@ void main() {
     vec3 R = normalize(reflect(L, N));
     vec3 V = normalize(worldspaceCameraPosition - worldspacePosition);
     
+    vec3 direction = vec3(3, 0, 0) - lightSource;
+    float radius = 3.1415 / 24.;
+    radius = spot.radius;
+    bool inSpotlight = dot(-normalize(direction), L) > cos(radius);
+    
     vec3 amb = materialAmb * lightColor / 10.0 * mat.Ka;
-    vec3 diff = clamp(dot(N, L), 0., 1.) * materialDiff * lightColor * mat.Kd / sqrt(dist + 1.0);
-    vec3 spec = pow(clamp(-dot(V, R), 0., 1.), shininess) * materialSpec * lightColor * mat.Ks / sqrt(dist + 1.0);
+    vec3 diff = vec3(0);
+    vec3 spec = vec3(0);
+    if (inSpotlight) {
+    	diff = clamp(dot(N, L), 0., 1.) * materialDiff * lightColor * mat.Kd / sqrt(dist + 1.0);
+    	spec = pow(clamp(-dot(V, R), 0., 1.), shininess) * materialSpec * lightColor * mat.Ks / sqrt(dist + 1.0);
+    }
     
     gl_FragColor = vec4(amb + diff + spec + mat.Ke, 1);
-    //if (dist < 1.0)
+    //if (!inSpotlight)
     	//gl_FragColor = vec4(1, 0, 0, 1);
 }

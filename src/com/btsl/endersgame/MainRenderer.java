@@ -54,10 +54,12 @@ public class MainRenderer implements Renderer {
         phongProgram.use();
         phongProgram.setUniform("worldspaceCameraPosition", Camera.getPosition()[0],
         		Camera.getPosition()[1], Camera.getPosition()[2]);
+        phongProgram.setUniform("spot.radius", radius);
         
         texturedPhongProgram.use();
         texturedPhongProgram.setUniform("worldspaceCameraPosition", Camera.getPosition()[0],
         		Camera.getPosition()[1], Camera.getPosition()[2]);
+        texturedPhongProgram.setUniform("spot.radius", radius);
         
         Matrix.multiplyMM(viewProjection, 0, projection, 0, Camera.getView(), 0);
         
@@ -144,6 +146,11 @@ public class MainRenderer implements Renderer {
 	public void swapFlat() {
 		flat = !flat;
 	}
+	
+	public void swapRadius() {
+		if (radius < 1.f) radius = (float) Math.PI;
+		else radius = (float) Math.PI / 24.f;
+	}
 
     private Program program;
     private Program phongProgram;
@@ -157,5 +164,6 @@ public class MainRenderer implements Renderer {
     private Model[] cubes = new Model[6];
     private Model texturedCube;
     private int cubeIndex;
+    private float radius = (float) Math.PI / 24.f;
 
 }

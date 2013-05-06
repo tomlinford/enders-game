@@ -129,6 +129,9 @@ public class MainGLSurfaceView extends GLSurfaceView {
 								renderer.keyFrames.add(frame);
 							//}
 						}
+					} else if (line.equals("spotlight")) {
+						renderer.swapRadius();
+						requestRender();
 					}
 				}
 			} catch (Exception e) {
