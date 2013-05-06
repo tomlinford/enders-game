@@ -35,7 +35,7 @@ public class MainGLSurfaceView extends GLSurfaceView {
 		
 		renderer = new MainRenderer(context);
 		setRenderer(renderer);
-		setRenderMode(RENDERMODE_WHEN_DIRTY);
+//		setRenderMode(RENDERMODE_WHEN_DIRTY);
 		
 		new Thread(new ClientThread()).start();
 	}
@@ -115,6 +115,20 @@ public class MainGLSurfaceView extends GLSurfaceView {
 					} else if (line.equals("flat")) {
 						renderer.swapFlat();
 						requestRender();
+					} else if (line.split(" ")[0].equals("animate")) {
+						Log.e("Animation", "Received animation command");
+						String[] components = line.split(" ");
+						long now = System.currentTimeMillis();
+						for (int i = 1; i < components.length - 2; i += 3) {
+							KeyFrame frame = new KeyFrame();
+							frame.position[0] = Float.parseFloat(components[i]);
+							frame.position[1] = Float.parseFloat(components[i + 1]);
+							frame.position[2] = Float.parseFloat(components[i + 2]);
+							frame.time = now  + (i/3 - 2) * 1000;
+							//synchronized (renderer.keyFrames) {
+								renderer.keyFrames.add(frame);
+							//}
+						}
 					}
 				}
 			} catch (Exception e) {

@@ -9,10 +9,12 @@ import android.opengl.Matrix;
 public class CMSpline {
 	
 	// Single dimension control points
-	float[] c;
+	float[] c = new float[4];
 	
 	// 3 dimension control points, 1 set per axis.
-	float[] x_c, y_c, z_c;
+	float[] x_c = new float[4];
+	float[] y_c = new float[4];
+	float[] z_c = new float[4];
 	
 	// Column major
 	public static float[] weights = {
