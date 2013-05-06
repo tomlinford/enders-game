@@ -29,17 +29,6 @@ public class MainRenderer implements Renderer {
 	
 	public MainRenderer(Context context) {
 		this.context = context;
-		
-		/*long now = System.currentTimeMillis();
-		for (int i = 0; i < 100; i++) {
-			KeyFrame frame = new KeyFrame();
-			frame.position[0] = (i % 2) * -1 + 1;
-			frame.position[1] = 0;
-			frame.position[2] = 0;
-			frame.time = now + (i - 1) * 1000;
-			Log.e("Keyframe", "Keyframe at (" + frame.position[0] + ", " + frame.position[1] + ", " + frame.position[2] + ") for time" + frame.time);
-			keyFrames.add(frame);
-		}*/
 	}
 
 	@Override
@@ -78,6 +67,7 @@ public class MainRenderer implements Renderer {
         else sphere.draw(phongProgram, GLES20.GL_TRIANGLES, viewProjection, 0);
 //        texturedCube.draw(texturedPhongProgram, GLES20.GL_TRIANGLES, viewProjection, 0);
         shirt.draw(texturedPhongProgram, GLES20.GL_TRIANGLES, viewProjection, 0);
+        plane.draw(phongProgram, GLES20.GL_TRIANGLES, viewProjection, 0);
 	}
 
 	@Override
@@ -116,6 +106,11 @@ public class MainRenderer implements Renderer {
 		flatSphere.translate(3, 0, 0);
 		sphere = OBJFile.createModelFromFile("sphere.obj", context, "vertexCoordinates", null, "normalCoordinates", true);
 		sphere.translate(3, 0, 0);
+		
+		plane = OBJFile.createModelFromFile("plane.obj", context, "vertexCoordinates", null, "normalCoordinates");
+		plane.translate(0, -1.5f, 0);
+		plane.scale(100);
+		plane.rotate(90, 1, 0, 0);
 	}
 	
 	ArrayList<KeyFrame> getControlFrames(long time)
@@ -153,6 +148,7 @@ public class MainRenderer implements Renderer {
     private Program program;
     private Program phongProgram;
     private Program texturedPhongProgram;
+    private Model plane;
     private Model shirt;
 //    private Model bunny;
     private Model sphere;

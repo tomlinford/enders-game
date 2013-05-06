@@ -111,6 +111,18 @@ public class Model {
 		Matrix.scaleM(model, 0, s, s, s);
 	}
 	
+	/**
+	 * Rotates the model by number of degrees a about the axis
+	 * signified by x, y, z
+	 * @param a
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
+	public void rotate(float a, float x, float y, float z) {
+		Matrix.rotateM(model, 0, a, x, y, z);
+	}
+	
 	
 	/**
 	 * Generate ModelBuffer from various data (can be passed in as null)

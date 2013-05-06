@@ -33,8 +33,6 @@ varying vec3 worldspaceNormal;
 void main() {
 	vec3 lightSource = spot.position;
     vec3 lightColor = spot.color;
-    float dist = distance(lightSource, worldspacePosition) +
-                 distance(worldspacePosition, worldspaceCameraPosition);
     
     vec3 materialAmb = mat.Ka;
     vec3 materialDiff = mat.Kd;
@@ -42,6 +40,8 @@ void main() {
     float shininess = mat.Ns;
     lightSource = vec3(5, 0, 5);
     lightColor = vec3(1.0, 1.0, 1.0);
+    float dist = distance(lightSource, worldspacePosition) +
+                 distance(worldspacePosition, worldspaceCameraPosition);
 
     vec3 L = normalize(lightSource - worldspacePosition);
     vec3 N = normalize(worldspaceNormal);
@@ -49,8 +49,10 @@ void main() {
     vec3 V = normalize(worldspaceCameraPosition - worldspacePosition);
     
     vec3 amb = materialAmb * lightColor / 10.0 * mat.Ka;
-    vec3 diff = clamp(dot(N, L), 0., 1.) * materialDiff * lightColor * mat.Kd;// / sqrt(dist + 1.0);
-    vec3 spec = pow(clamp(-dot(V, R), 0., 1.), shininess) * materialSpec * lightColor * mat.Ks;// / sqrt(dist + 1);
+    vec3 diff = clamp(dot(N, L), 0., 1.) * materialDiff * lightColor * mat.Kd / sqrt(dist + 1.0);
+    vec3 spec = pow(clamp(-dot(V, R), 0., 1.), shininess) * materialSpec * lightColor * mat.Ks / sqrt(dist + 1.0);
     
-    gl_FragColor = vec4(amb + diff + spec, 1);
+    gl_FragColor = vec4(amb + diff + spec + mat.Ke, 1);
+    //if (dist < 1.0)
+    	//gl_FragColor = vec4(1, 0, 0, 1);
 }
